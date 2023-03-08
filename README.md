@@ -3,6 +3,13 @@
 修改自 [https://github.com/wuyr/ActivityMessenger]
 
 因为依赖总下不动，于是自己进行了部分修改，自用
+# 使用 
+* [![](https://jitpack.io/v/Knightwood/ActivityMessenger.svg)](https://jitpack.io/#Knightwood/ActivityMessenger)
+
+
+```
+implementation "com.github.Knightwood:ActivityMessenger:1.0"
+```
 
 #### 在日常开发中，每次使用startActivityForResult时，要做的事情都超级多：
 
