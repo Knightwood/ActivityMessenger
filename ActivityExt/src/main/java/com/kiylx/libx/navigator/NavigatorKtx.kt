@@ -1,4 +1,4 @@
-package com.kiylx.libx.activitymessenger.navigator
+package com.kiylx.libx.navigator
 
 import android.os.Bundle
 import android.util.Log
