@@ -1,8 +1,8 @@
 ##  ActivityMessenger，借助Kotlin特性，简化Activity之间传参和回调的逻辑代码。
-
 修改自 [https://github.com/wuyr/ActivityMessenger]
 
-因为依赖总下不动，于是自己进行了部分修改，自用
+2023.6.22注： 增加navigation组件的一些扩展功能，如导航回退传惨，修改版的navcontroller（使用show/hide而不是replace）
+
 # 使用 
 * [![](https://jitpack.io/v/Knightwood/ActivityMessenger.svg)](https://jitpack.io/#Knightwood/ActivityMessenger)
 
