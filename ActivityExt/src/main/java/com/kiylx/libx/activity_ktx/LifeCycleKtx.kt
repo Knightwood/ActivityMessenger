@@ -1,4 +1,4 @@
-package com.kiylx.libx.activitymessenger.ktx
+package com.kiylx.libx.activity_ktx
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
