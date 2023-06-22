@@ -5,8 +5,6 @@
 
 package com.kiylx.libx.activitymessenger.androidx
 
-import android.app.Activity
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
@@ -22,27 +20,8 @@ import kotlin.reflect.KClass
  * startActivity和startActivityResult的方法集合
  */
 object ActivityMessenger {
-    /**
-     * 启动任意activity
-     * @param pkgName 应用的包名(manifest中的package)
-     *
-     * ```
-     * 用法：
-     *     在context环境下启动settingsActivity
-     *
-     *     mContext.startActivity<SettingsActivity>("pkgName")
-     * ```
-     *
-     */
-    inline fun <reified TARGET : Activity> Context.startActivity(pkgName: String) {
-        val componentName =
-            ComponentName(pkgName, TARGET::class.java.canonicalName)
-        val intent = Intent()
-        intent.component = componentName
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-    }
 
+//<editor-fold desc="startActivity">
     /**
      * 作用同[FragmentActivity.startActivity] 示例：
      *
@@ -206,8 +185,11 @@ object ActivityMessenger {
         starter.startActivity(Intent(starter, target).putExtras(*params))
     }
 
+    //</editor-fold>
 
 //====================================startActivityForResult=====================================//
+
+//<editor-fold desc="startActivityForResult">
     /**
      * 作用同[FragmentActivity.startActivityForResult] 示例：
      *
@@ -397,7 +379,9 @@ object ActivityMessenger {
             finallyLaunchActivityForResultCode(it, Intent(it, target).putExtras(*params), callback)
         }
     }
+    //</editor-fold>
 
+//<editor-fold desc="finish">
 
     /**
      * 作用同[FragmentActivity.finish] 示例：
@@ -426,4 +410,6 @@ object ActivityMessenger {
      */
     fun finish(src: Fragment, vararg params: Pair<String, Any?>) =
         src.activity?.run { finish(this, *params) }
+    //</editor-fold>
+
 }

@@ -8,6 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 
 //=================================================最终方法=======================================//
+/**
+ * @param starter
+ * @param intent 传入intent
+ * @param callback startActivityForResult之后执行block块
+ */
 inline fun finallyLaunchActivityForResult(
     starter: FragmentActivity?,
     intent: Intent,
@@ -25,7 +30,11 @@ inline fun finallyLaunchActivityForResult(
             .commitAllowingStateLoss()
     }
 }
-
+/**
+ * @param starter
+ * @param intent 传入intent
+ * @param callback startActivityForResult之后执行block块
+ */
 inline fun finallyLaunchActivityForResultCode(
     starter: FragmentActivity?,
     intent: Intent,
@@ -60,9 +69,20 @@ class GhostFragment : Fragment() {
         }
 
     private var intent: Intent? = null
+
+    /**
+     * the callback to be called on the main thread when activity result is available
+     */
     private var callback: ((result: Intent?) -> Unit)? = null
+
+    /**
+     * the callback to be called on the main thread when activity result is available
+     */
     private var callback2: ((resultCode: Int, result: Intent?) -> Unit)? = null
 
+    /**
+     * @param callback onActivityResult的回调
+     */
     fun init( intent: Intent, callback: ((result: Intent?) -> Unit)) {
         this.intent = intent
         this.callback = callback

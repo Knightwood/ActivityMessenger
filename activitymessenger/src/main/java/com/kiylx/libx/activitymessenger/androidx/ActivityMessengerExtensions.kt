@@ -2,6 +2,10 @@
 
 package com.kiylx.libx.activitymessenger.androidx
 
+import android.app.Activity
+import android.app.Application
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -15,9 +19,9 @@ import kotlin.reflect.KClass
  * 比起ActivityMessenger.kt,这个是扩展方法版本
  * startActivity和startActivityResult的方法集合
  */
-
+//<editor-fold desc="startActivity">
+//<editor-fold desc="传入实例版本">
 //====================================startActivity==================================================//
-//传入实例版本
 /**
  * 作用同[FragmentActivity.launchActivity] 示例：
  *
@@ -45,6 +49,10 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivity(
         startActivity(Intent(this, TARGET::class.java).putExtras(*params))
     }
 }
+//</editor-fold>
+
+//<editor-fold desc="传入KClass版本">
+
 //传入KClass版本
 /**
  * Fragment跳转，同[FragmentActivity.launchActivity] 示例：
@@ -78,11 +86,17 @@ fun Fragment.launchActivity(
         startActivity(Intent(this, target.java).putExtras(*params))
     }
 }
+//</editor-fold>
+
+//<editor-fold desc="javaClass版本">
+
 //javaClass版本
 /** 作用同上，以下三个方法为了兼容Java Class */
 fun FragmentActivity.launchActivity(
     target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>
-) {this.startActivity(Intent(this, target).putExtras(*params))}
+) {
+    this.startActivity(Intent(this, target).putExtras(*params))
+}
 
 fun Fragment.launchActivity(
     target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>
@@ -91,8 +105,14 @@ fun Fragment.launchActivity(
         startActivity(Intent(this, target).putExtras(*params))
     }
 }
+//</editor-fold>
+//</editor-fold>
 //====================================startActivityForResult==================================================//
 
+//<editor-fold desc="startActivityForResult">
+
+//<editor-fold desc="javaclass版本">
+//<editor-fold desc="javaclass版本-不带code">
 /**
  * 作用同[FragmentActivity.launchActivityForResult] 示例：
  *
@@ -125,6 +145,9 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResult(
 ) {
     requireActivity().launchActivityForResult(TARGET::class, *params, callback = callback)
 }
+//</editor-fold>
+
+//<editor-fold desc="javaclass版本-带code">
 
 //跟上面唯一区别是匿名函数参数多了一个ResultCode
 /**
@@ -161,8 +184,13 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResultC
 ) {
     requireActivity().launchActivityForResultCode(TARGET::class, *params, callback = callback)
 }
+//</editor-fold>
 
 //上面的几个launchActivityForResult方法都是调用这里的方法======================================//
+//</editor-fold>
+
+//<editor-fold desc="kclass版本">
+//<editor-fold desc="kclass版本-不带code">
 
 //带ResultCode版本=======================
 //KClass版本
@@ -212,7 +240,9 @@ inline fun Fragment.launchActivityForResult(
 ) = activity?.run {
     ActivityMessenger.launchActivityForResult(this, target, *params, callback = callback)
 }
+//</editor-fold>
 
+//<editor-fold desc="kclass版本-带code">
 
 //带ResultCode版本=======================
 //KClass版本
@@ -262,7 +292,14 @@ inline fun Fragment.launchActivityForResultCode(
 ) = activity?.run {
     ActivityMessenger.launchActivityForResultCode(this, target, *params, callback = callback)
 }
+//</editor-fold>
+
+//</editor-fold>
+
 //=============================下面的是直接传intent版本,上面的传入的是多个params
+
+//<editor-fold desc="直接传intent版本">
+
 /**
  * 作用同[FragmentActivity.launchActivityForResult]
  *
@@ -294,7 +331,11 @@ inline fun Fragment.launchActivityForResultCode(
 ) = activity?.run {
     finallyLaunchActivityForResultCode(this, intent, callback)
 }
+//</editor-fold>
+//</editor-fold>
 //=============================================finish方法=======================
+//<editor-fold desc="finish方法">
+
 /**
  * 作用同[FragmentActivity.finish] 示例：
  *
@@ -313,6 +354,8 @@ fun FragmentActivity.finish(intent: Intent) = run {
     setResult(FragmentActivity.RESULT_OK, intent)
     finish()
 }
+//</editor-fold>
+//<editor-fold desc="toIntent方法">
 
 /**
  * String转Intent对象
@@ -327,3 +370,28 @@ fun FragmentActivity.finish(intent: Intent) = run {
  * @param flags [Intent.setFlags]
  */
 fun String.toIntent(flags: Int = 0): Intent = Intent(this).setFlags(flags)
+//</editor-fold>
+
+//<editor-fold desc="application启动activity方法">
+/**
+ * 启动任意activity
+ *
+ * ```
+ * 用法：
+ *     在application环境下启动settingsActivity
+ *
+ *     application.startActivity<SettingsActivity>()
+ * ```
+ *
+ */
+inline fun <reified TARGET : Activity> Application.launchActivity(vararg params: Pair<String, Any?>) {
+    val componentName =
+        ComponentName(this.packageName, TARGET::class.java.canonicalName)
+    val intent = Intent()
+    intent.putExtras(*params)
+    intent.component = componentName
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+    startActivity(intent)
+}
+
+//</editor-fold>
