@@ -13,7 +13,6 @@ import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
 import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResultCode
 import com.kiylx.libx.activitymessenger.core.putExtras
 import com.kiylx.libx.activitymessenger.core.runIfNonNull
-import kotlin.reflect.KClass
 
 /**
  * 比起扩展方法需要fragment或者fragmentActivity接收者才可以调用 这里是非扩展方法版本。
@@ -106,15 +105,6 @@ object ActivityMessenger {
      */
     fun launchActivity(
         starter: FragmentActivity,
-        target: KClass<out FragmentActivity>,
-        vararg params: Pair<String, Any?>,
-    ) {
-        starter.startActivity(Intent(starter, target.java).putExtras(*params))
-    }
-
-    /** 作用同上，此方法为了兼容Java Class */
-    fun launchActivity(
-        starter: FragmentActivity,
         target: Class<out FragmentActivity>,
         vararg params: Pair<String, Any?>,
     ) {
@@ -141,13 +131,6 @@ object ActivityMessenger {
      * @param params extras键值对
      */
     fun launchActivity(
-        starter: Fragment, target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>,
-    ) {
-        starter.startActivity(Intent(starter.activity, target.java).putExtras(*params))
-    }
-
-    /** 作用同上，此方法为了兼容Java Class */
-    fun launchActivity(
         starter: Fragment, target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
     ) {
         starter.startActivity(Intent(starter.activity, target).putExtras(*params))
@@ -172,13 +155,6 @@ object ActivityMessenger {
      * @param target 要启动的Activity
      * @param params extras键值对
      */
-    fun launchActivity(
-        starter: Context, target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>,
-    ) {
-        starter.startActivity(Intent(starter, target.java).putExtras(*params))
-    }
-
-    /** 作用同上，此方法为了兼容Java Class */
     fun launchActivity(
         starter: Context, target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
     ) {
@@ -215,7 +191,7 @@ object ActivityMessenger {
         starter: FragmentActivity, vararg params: Pair<String, Any?>,
         crossinline callback: ((result: Intent?) -> Unit),
     ) {
-        launchActivityForResult(starter, TARGET::class, *params, callback = callback)
+        launchActivityForResult(starter, TARGET::class.java, *params, callback = callback)
     }
 
     /**
@@ -240,9 +216,9 @@ object ActivityMessenger {
      * @param TARGET 要启动的Activity
      */
     inline fun <reified TARGET : FragmentActivity> launchActivityForResult(
-        starter: Fragment, vararg params: Pair<String, Any?>,
+        starter: Fragment, vararg params: Pair<String, Any?>,    useActivityFM: Boolean = true,
         crossinline callback: ((result: Intent?) -> Unit),
-    ) = launchActivityForResult(starter.activity, TARGET::class, *params, callback = callback)
+    ) = launchActivityForResult(starter, TARGET::class.java,useActivityFM, *params, callback = callback)
 
     /**
      * 作用同[FragmentActivity.startActivityForResult] 示例：
@@ -268,7 +244,7 @@ object ActivityMessenger {
     inline fun <reified TARGET : FragmentActivity> launchActivityForResultCode(
         starter: FragmentActivity, vararg params: Pair<String, Any?>,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
-    ) = launchActivityForResultCode(starter, TARGET::class, *params, callback = callback)
+    ) = launchActivityForResultCode(starter, TARGET::class.java, *params, callback = callback)
 
     /**
      * Fragment跳转，同[FragmentActivity.startActivityForResult] 示例：
@@ -292,9 +268,9 @@ object ActivityMessenger {
      * @param TARGET 要启动的Activity
      */
     inline fun <reified TARGET : FragmentActivity> launchActivityForResultCode(
-        starter: Fragment, vararg params: Pair<String, Any?>,
+        starter: Fragment, vararg params: Pair<String, Any?>,useActivityFM: Boolean = true,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
-    ) = launchActivityForResultCode(starter.activity, TARGET::class, *params, callback = callback)
+    ) = launchActivityForResultCode(starter, TARGET::class.java, useActivityFM,*params, callback = callback)
 
     /**
      * 作用同[FragmentActivity.startActivityForResult] 示例：
@@ -318,18 +294,18 @@ object ActivityMessenger {
      * @param callback onActivityResult的回调
      */
     inline fun launchActivityForResult(
-        starter: FragmentActivity?, target: KClass<out FragmentActivity>,
-        vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit),
-    ) = starter.runIfNonNull {
-        finallyLaunchActivityForResult(it, Intent(it, target.java).putExtras(*params), callback)
-    }
-
-    /** 作用同上，此方法为了兼容Java Class */
-    inline fun launchActivityForResult(
         starter: FragmentActivity?, target: Class<out FragmentActivity>,
         vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit),
     ) = starter.runIfNonNull {
         finallyLaunchActivityForResult(it, Intent(it, target).putExtras(*params), callback)
+    }
+
+    inline fun launchActivityForResult(
+        starter: Fragment, target: Class<out FragmentActivity>,
+        useActivityFM: Boolean = true,
+        vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit),
+    )  {
+        finallyLaunchActivityForResult(starter, Intent(starter.activity, target).putExtras(*params), useActivityFM, callback)
     }
 
     /**
@@ -355,22 +331,6 @@ object ActivityMessenger {
      */
     inline fun launchActivityForResultCode(
         starter: FragmentActivity?,
-        target: KClass<out FragmentActivity>,
-        vararg params: Pair<String, Any?>,
-        crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
-    ) {
-        starter.runIfNonNull {
-            finallyLaunchActivityForResultCode(
-                it,
-                Intent(it, target.java).putExtras(*params),
-                callback
-            )
-        }
-    }
-
-    /** 作用同上，此方法为了兼容Java Class */
-    inline fun launchActivityForResultCode(
-        starter: FragmentActivity?,
         target: Class<out FragmentActivity>,
         vararg params: Pair<String, Any?>,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
@@ -378,6 +338,15 @@ object ActivityMessenger {
         starter.runIfNonNull {
             finallyLaunchActivityForResultCode(it, Intent(it, target).putExtras(*params), callback)
         }
+    }
+    inline fun launchActivityForResultCode(
+        starter: Fragment,
+        target: Class<out FragmentActivity>,
+        useActivityFM: Boolean = true,
+        vararg params: Pair<String, Any?>,
+        crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
+    ) {
+        finallyLaunchActivityForResultCode(starter, Intent(starter.activity, target).putExtras(*params),useActivityFM, callback)
     }
     //</editor-fold>
 

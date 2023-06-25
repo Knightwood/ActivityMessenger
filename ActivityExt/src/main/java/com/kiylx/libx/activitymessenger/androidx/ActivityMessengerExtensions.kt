@@ -5,7 +5,6 @@ package com.kiylx.libx.activitymessenger.androidx
 import android.app.Activity
 import android.app.Application
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -13,24 +12,23 @@ import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger.launchActivit
 import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
 import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResultCode
 import com.kiylx.libx.activitymessenger.core.putExtras
-import kotlin.reflect.KClass
 
 /**
  * 比起ActivityMessenger.kt,这个是扩展方法版本
  * startActivity和startActivityResult的方法集合
  */
 //<editor-fold desc="startActivity">
-//<editor-fold desc="传入实例版本">
+//<editor-fold desc="传入泛型">
 //====================================startActivity==================================================//
 /**
  * 作用同[FragmentActivity.launchActivity] 示例：
  *
  * ```
  *      //不携带参数
- *      startActivity<TestActivity>()
+ *      launchActivity<TestActivity>()
  *
  *      //携带参数（可连续多个键值对）
- *      startActivity<TestActivity>("Key" to "Value")
+ *      launchActivity<TestActivity>("Key" to "Value")
  * ```
  *
  * @param params extras键值对
@@ -51,19 +49,17 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivity(
 }
 //</editor-fold>
 
-//<editor-fold desc="传入KClass版本">
-
-//传入KClass版本
+//<editor-fold desc="传参数">
 /**
  * Fragment跳转，同[FragmentActivity.launchActivity] 示例：
  *
  * ```
  *      //不携带参数
- *      startActivity(this, TestActivity::class)
+ *      launchActivity(TestActivity::class.java)
  *
  *      //携带参数（可连续多个键值对）
- *     startActivity(
- *         TestActivity::class,
+ *     launchActivity(
+ *         TestActivity::class.java,
  *         "Key1" to "Value",
  *         "Key2" to 123
  *     )
@@ -72,26 +68,6 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivity(
  * @param target 要启动的Activity
  * @param params extras键值对
  */
-fun FragmentActivity.launchActivity(
-    target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>
-) {
-    this.startActivity(Intent(this, target.java).putExtras(*params))
-}
-
-
-fun Fragment.launchActivity(
-    target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>
-) {
-    this.requireActivity().run {
-        startActivity(Intent(this, target.java).putExtras(*params))
-    }
-}
-//</editor-fold>
-
-//<editor-fold desc="javaClass版本">
-
-//javaClass版本
-/** 作用同上，以下三个方法为了兼容Java Class */
 fun FragmentActivity.launchActivity(
     target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>
 ) {
@@ -111,14 +87,14 @@ fun Fragment.launchActivity(
 
 //<editor-fold desc="startActivityForResult">
 
-//<editor-fold desc="javaclass版本">
+//<editor-fold desc="javaclass版本-传泛型">
 //<editor-fold desc="javaclass版本-不带code">
 /**
  * 作用同[FragmentActivity.launchActivityForResult] 示例：
  *
  * ```
  *      //不携带参数
- *      startActivityForResult<TestActivity> {
+ *      launchActivityForResult<TestActivity> {
  *          if (it == null) {
  *              //未成功处理，即（ResultCode != RESULT_OK）
  *          } else {
@@ -136,14 +112,15 @@ fun Fragment.launchActivity(
 inline fun <reified TARGET : FragmentActivity> FragmentActivity.launchActivityForResult(
     vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    launchActivityForResult(TARGET::class, *params, callback = callback)
+    launchActivityForResult(TARGET::class.java, *params, callback = callback)
 }
 
 
 inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResult(
+    useActivityFM: Boolean = true,
     vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    requireActivity().launchActivityForResult(TARGET::class, *params, callback = callback)
+    launchActivityForResult(TARGET::class.java,useActivityFM, *params, callback = callback)
 }
 //</editor-fold>
 
@@ -155,7 +132,7 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResult(
  *
  * ```
  *      //不携带参数
- *      startActivityForResult<TestActivity> {resultCode, result->
+ *      launchActivityForResult<TestActivity> {resultCode, result->
  *          if (resultCode == RESULT_OK) {
  *              //处理成功，这里可以操作返回的intent
  *          } else {
@@ -174,32 +151,31 @@ inline fun <reified TARGET : FragmentActivity> FragmentActivity.launchActivityFo
     vararg params: Pair<String, Any?>,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
-    launchActivityForResultCode(TARGET::class, *params, callback = callback)
+    launchActivityForResultCode(TARGET::class.java, *params, callback = callback)
 }
 
 
 inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResultCode(
+    useActivityFM: Boolean = true,
     vararg params: Pair<String, Any?>,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
-    requireActivity().launchActivityForResultCode(TARGET::class, *params, callback = callback)
+    launchActivityForResultCode(TARGET::class.java, useActivityFM, *params, callback = callback)
 }
 //</editor-fold>
 
-//上面的几个launchActivityForResult方法都是调用这里的方法======================================//
 //</editor-fold>
 
-//<editor-fold desc="kclass版本">
-//<editor-fold desc="kclass版本-不带code">
-
+//上面的几个launchActivityForResult方法都是调用这里的方法======================================//
+//<editor-fold desc="javaClass版本-传参数">
+//<editor-fold desc="javaClass版本-不带code">
 //带ResultCode版本=======================
-//KClass版本
 /**
  * 作用同[FragmentActivity.launchActivityForResult] 示例：
  *
  * ```
  *      //不携带参数
- *      startActivityForResult(this, TestActivity::class) {
+ *      launchActivityForResult(TestActivity::class.java) {
  *          if (it == null) {
  *              //未成功处理，即（ResultCode != RESULT_OK）
  *          } else {
@@ -215,43 +191,35 @@ inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResultC
  * @param callback onActivityResult的回调
  */
 inline fun FragmentActivity.launchActivityForResult(
-    target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>,
+    target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
     crossinline callback: ((result: Intent?) -> Unit)
-) = ActivityMessenger.launchActivityForResult(this, target, *params, callback = callback)
-
-
-inline fun Fragment.launchActivityForResult(
-    target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>,
-    crossinline callback: ((result: Intent?) -> Unit)
-) = activity?.run {
-    ActivityMessenger.launchActivityForResult(this, target, *params, callback = callback)
+) {
+    finallyLaunchActivityForResult(this, Intent(this, target).putExtras(*params), callback = callback)
 }
-//JavaClass版本
-/** 作用同上，以下三个方法为了兼容Java Class */
-inline fun FragmentActivity.launchActivityForResult(
-    target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
-    crossinline callback: ((result: Intent?) -> Unit)
-) = ActivityMessenger.launchActivityForResult(this, target, *params, callback = callback)
 
 
 inline fun Fragment.launchActivityForResult(
-    target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
+    target: Class<out FragmentActivity>, useActivityFM: Boolean = true,
+    vararg params: Pair<String, Any?>,
     crossinline callback: ((result: Intent?) -> Unit)
-) = activity?.run {
-    ActivityMessenger.launchActivityForResult(this, target, *params, callback = callback)
+) {
+    finallyLaunchActivityForResult(
+        this,
+        Intent(this.activity, target).putExtras(*params),
+        useActivityFM,
+        callback
+    )
 }
 //</editor-fold>
 
-//<editor-fold desc="kclass版本-带code">
-
+//<editor-fold desc="javaClass版本-带code">
 //带ResultCode版本=======================
-//KClass版本
 /**
  * 作用同[FragmentActivity.launchActivityForResult] 示例：
  *
  * ```
  *      //不携带参数
- *      startActivityForResult(this, TestActivity::class) {resultCode, result->
+ *      launchActivityForResult(TestActivity::class.java) {resultCode, result->
  *          if (resultCode == RESULT_OK) {
  *              //处理成功，这里可以操作返回的intent
  *          } else {
@@ -267,30 +235,24 @@ inline fun Fragment.launchActivityForResult(
  * @param callback onActivityResult的回调
  */
 inline fun FragmentActivity.launchActivityForResultCode(
-    target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>,
+    target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) = ActivityMessenger.launchActivityForResultCode(this, target, *params, callback = callback)
-
-
-inline fun Fragment.launchActivityForResultCode(
-    target: KClass<out FragmentActivity>, vararg params: Pair<String, Any?>,
-    crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) = activity?.run {
-    ActivityMessenger.launchActivityForResultCode(this, target, *params, callback = callback)
+) {
+    finallyLaunchActivityForResultCode(this, Intent(this, target).putExtras(*params), callback)
 }
-//JavaClass版本
-/** 作用同上，以下三个方法为了兼容Java Class */
-inline fun FragmentActivity.launchActivityForResultCode(
-    target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
-    crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) = ActivityMessenger.launchActivityForResultCode(this, target, *params, callback = callback)
 
 
 inline fun Fragment.launchActivityForResultCode(
-    target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
+    target: Class<out FragmentActivity>, useActivityFM: Boolean = true,
+    vararg params: Pair<String, Any?>,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) = activity?.run {
-    ActivityMessenger.launchActivityForResultCode(this, target, *params, callback = callback)
+) {
+    finallyLaunchActivityForResultCode(
+        this,
+        Intent(this.activity, target).putExtras(*params),
+        useActivityFM,
+        callback = callback
+    )
 }
 //</editor-fold>
 
@@ -314,9 +276,10 @@ inline fun FragmentActivity?.launchActivityForResult(
 
 
 inline fun Fragment.launchActivityForResult(
+    useActivityFM: Boolean = true,
     intent: Intent, crossinline callback: ((result: Intent?) -> Unit)
-) = activity?.run {
-    finallyLaunchActivityForResult(this, intent, callback)
+) {
+    finallyLaunchActivityForResult(this, intent, useActivityFM, callback)
 }
 
 inline fun FragmentActivity?.launchActivityForResultCode(
@@ -327,10 +290,9 @@ inline fun FragmentActivity?.launchActivityForResultCode(
 
 
 inline fun Fragment.launchActivityForResultCode(
+    useActivityFM: Boolean = true,
     intent: Intent, crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) = activity?.run {
-    finallyLaunchActivityForResultCode(this, intent, callback)
-}
+) = finallyLaunchActivityForResultCode(this, intent, useActivityFM, callback)
 //</editor-fold>
 //</editor-fold>
 //=============================================finish方法=======================
