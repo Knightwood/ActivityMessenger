@@ -63,7 +63,7 @@ inline fun finallyLaunchActivityForResult(
 /**
  * @param starter
  * @param intent 传入intent
- * @param useActivityFM true:使用supportFragmentManager,false:使用
+ * @param useActivityFM true:使用supportFragmentManager,false:使用childFragmentManager
  * @param callback startActivityForResult之后执行block块
  */
 inline fun finallyLaunchActivityForResultCode(

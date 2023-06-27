@@ -64,7 +64,7 @@ object ActivityMessenger {
     }
 
     /**
-     * Adapter跳转，同[Context.startActivity] 示例：
+     * Activity跳转，同[Context.startActivity] 示例：
      *
      * ```
      *      //不携带参数
@@ -137,7 +137,7 @@ object ActivityMessenger {
     }
 
     /**
-     * Adapter里面跳转，同[Context.startActivity] 示例：
+     * FragmentActivity里面跳转，同[Context.startActivity] 示例：
      *
      * ```
      *      //不携带参数
@@ -216,9 +216,12 @@ object ActivityMessenger {
      * @param TARGET 要启动的Activity
      */
     inline fun <reified TARGET : FragmentActivity> launchActivityForResult(
-        starter: Fragment, vararg params: Pair<String, Any?>,    useActivityFM: Boolean = true,
+        starter: Fragment, vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
         crossinline callback: ((result: Intent?) -> Unit),
-    ) = launchActivityForResult(starter, TARGET::class.java,useActivityFM, *params, callback = callback)
+    ) = launchActivityForResult(
+        starter, TARGET::class.java, *params,
+        useActivityFM = useActivityFM, callback = callback
+    )
 
     /**
      * 作用同[FragmentActivity.startActivityForResult] 示例：
@@ -268,9 +271,15 @@ object ActivityMessenger {
      * @param TARGET 要启动的Activity
      */
     inline fun <reified TARGET : FragmentActivity> launchActivityForResultCode(
-        starter: Fragment, vararg params: Pair<String, Any?>,useActivityFM: Boolean = true,
+        starter: Fragment, vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
-    ) = launchActivityForResultCode(starter, TARGET::class.java, useActivityFM,*params, callback = callback)
+    ) = launchActivityForResultCode(
+        starter,
+        TARGET::class.java,
+        *params,
+        useActivityFM=   useActivityFM,
+        callback = callback
+    )
 
     /**
      * 作用同[FragmentActivity.startActivityForResult] 示例：
@@ -301,11 +310,19 @@ object ActivityMessenger {
     }
 
     inline fun launchActivityForResult(
-        starter: Fragment, target: Class<out FragmentActivity>,
+        starter: Fragment,
+        target: Class<out FragmentActivity>,
+
+        vararg params: Pair<String, Any?>,
         useActivityFM: Boolean = true,
-        vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit),
-    )  {
-        finallyLaunchActivityForResult(starter, Intent(starter.activity, target).putExtras(*params), useActivityFM, callback)
+        crossinline callback: ((result: Intent?) -> Unit),
+    ) {
+        finallyLaunchActivityForResult(
+            starter,
+            Intent(starter.activity, target).putExtras(*params),
+            useActivityFM,
+            callback
+        )
     }
 
     /**
@@ -339,14 +356,20 @@ object ActivityMessenger {
             finallyLaunchActivityForResultCode(it, Intent(it, target).putExtras(*params), callback)
         }
     }
+
     inline fun launchActivityForResultCode(
         starter: Fragment,
         target: Class<out FragmentActivity>,
-        useActivityFM: Boolean = true,
         vararg params: Pair<String, Any?>,
+        useActivityFM: Boolean = true,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
     ) {
-        finallyLaunchActivityForResultCode(starter, Intent(starter.activity, target).putExtras(*params),useActivityFM, callback)
+        finallyLaunchActivityForResultCode(
+            starter,
+            Intent(starter.activity, target).putExtras(*params),
+            useActivityFM,
+            callback
+        )
     }
     //</editor-fold>
 

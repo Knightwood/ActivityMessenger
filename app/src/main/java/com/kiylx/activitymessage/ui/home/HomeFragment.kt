@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.kiylx.activitymessage.MainActivity
 import com.kiylx.activitymessage.databinding.FragmentHomeBinding
+import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger
+import com.kiylx.libx.activitymessenger.androidx.launchActivityForResult
 import com.kiylx.libx.activitymessenger.androidx.launchActivityForResultCode
 
 class HomeFragment : Fragment() {
@@ -24,12 +26,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        launchActivityForResultCode(
-            MainActivity::class.java, false,
-            "to" to 1, "ee" to 2
-        ) { _, _ ->
-
-        }
+        launchActivityForResult<MainActivity>("Key" to "Value", useActivityFM = false){}
         val homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 

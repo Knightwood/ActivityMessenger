@@ -117,10 +117,16 @@ inline fun <reified TARGET : FragmentActivity> FragmentActivity.launchActivityFo
 
 
 inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResult(
+    vararg params: Pair<String, Any?>,
     useActivityFM: Boolean = true,
-    vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit)
+    crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    launchActivityForResult(TARGET::class.java,useActivityFM, *params, callback = callback)
+    launchActivityForResult(
+        target = TARGET::class.java,
+        params = params,
+        useActivityFM = useActivityFM,
+        callback = callback
+    )
 }
 //</editor-fold>
 
@@ -156,11 +162,15 @@ inline fun <reified TARGET : FragmentActivity> FragmentActivity.launchActivityFo
 
 
 inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResultCode(
-    useActivityFM: Boolean = true,
-    vararg params: Pair<String, Any?>,
+    vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
-    launchActivityForResultCode(TARGET::class.java, useActivityFM, *params, callback = callback)
+    launchActivityForResultCode(
+        target = TARGET::class.java,
+        params = params,
+        useActivityFM = useActivityFM,
+        callback = callback
+    )
 }
 //</editor-fold>
 
@@ -194,13 +204,17 @@ inline fun FragmentActivity.launchActivityForResult(
     target: Class<out FragmentActivity>, vararg params: Pair<String, Any?>,
     crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    finallyLaunchActivityForResult(this, Intent(this, target).putExtras(*params), callback = callback)
+    finallyLaunchActivityForResult(
+        this,
+        Intent(this, target).putExtras(*params),
+        callback = callback
+    )
 }
 
 
 inline fun Fragment.launchActivityForResult(
-    target: Class<out FragmentActivity>, useActivityFM: Boolean = true,
-    vararg params: Pair<String, Any?>,
+    target: Class<out FragmentActivity>,
+    vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
     crossinline callback: ((result: Intent?) -> Unit)
 ) {
     finallyLaunchActivityForResult(
@@ -243,8 +257,8 @@ inline fun FragmentActivity.launchActivityForResultCode(
 
 
 inline fun Fragment.launchActivityForResultCode(
-    target: Class<out FragmentActivity>, useActivityFM: Boolean = true,
-    vararg params: Pair<String, Any?>,
+    target: Class<out FragmentActivity>,
+    vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
     finallyLaunchActivityForResultCode(
