@@ -36,7 +36,7 @@ fun <T> Bundle.putExtras(vararg params: Pair<String, T>): Bundle {
                         putParcelableArray(key, value as Array<Parcelable?>)
                     value.isArrayOf<CharSequence>() ->
                         putCharSequenceArray(key, value as Array<CharSequence?>)
-                    else -> putObject(key, value)
+                    else -> throw IllegalArgumentException("放不进去，怎么想都放不进去吧")
                 }
             }
             is Serializable -> putSerializable(key, value)

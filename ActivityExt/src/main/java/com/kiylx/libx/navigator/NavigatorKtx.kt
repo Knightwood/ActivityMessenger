@@ -47,6 +47,7 @@ fun NavController.navWithAction(
 fun Fragment.setResult(resultCode: Int = ResultCode.SUCCESS, vararg params: Pair<String, Any?>) {
     arguments?.run {
         val requestCode = getString(NavigatorParams.Request_Code)
+            ?: throw IllegalArgumentException("requestCode为null")
         val targetFragmentId = getInt(NavigatorParams.Result_Receiver_Fragment_ID)
         val bundleParams = Bundle()
             .putExtras(*params)
@@ -252,7 +253,7 @@ class NavigatorParams(
 
         val Bundle.requestTag: String
             get() {
-                return this.getString(Request_Code)
+                return this.getString(Request_Code)!!
             }
 
         val Bundle.resultCode: Int
