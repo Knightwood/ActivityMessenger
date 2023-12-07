@@ -1,13 +1,15 @@
 package com.kiylx.activitymessage
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.lifecycle.ViewModelProvider
+
 import com.kiylx.activitymessage.databinding.ActivityMainBinding
+import com.kiylx.activitymessage.ui.SecondActivity
+import com.kiylx.activitymessage.ui.home.HomeViewModel
+import com.kiylx.libx.activity_ktx.activitymessenger.androidx.launchActivityForResult
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,17 +21,18 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
+        val a = arrayOf("Key" to "Value")
+        launchActivityForResult(SecondActivity::class.java, *a) {
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        }
+//        launchActivityForResult<MainActivity>("Key" to "Value") {}
+
+        val homeViewModel =
+            ViewModelProvider(this).get(HomeViewModel::class.java)
+
+        val textView: TextView = binding.textHome
+        homeViewModel.text.observe(this) {
+            textView.text = it
+        }
     }
 }

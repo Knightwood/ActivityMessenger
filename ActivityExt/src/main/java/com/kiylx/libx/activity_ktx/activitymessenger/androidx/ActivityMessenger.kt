@@ -3,16 +3,16 @@
     "SpellCheckingInspection",
 )
 
-package com.kiylx.libx.activitymessenger.androidx
+package com.kiylx.libx.activity_ktx.activitymessenger.androidx
 
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
-import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResultCode
-import com.kiylx.libx.activitymessenger.core.putExtras
-import com.kiylx.libx.activitymessenger.core.runIfNonNull
+import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResult
+import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResultCode
+import com.kiylx.libx.activity_ktx.activitymessenger.core.putExtras
+import com.kiylx.libx.activity_ktx.activitymessenger.core.runIfNonNull
 
 /**
  * 比起扩展方法需要fragment或者fragmentActivity接收者才可以调用 这里是非扩展方法版本。
@@ -216,11 +216,11 @@ object ActivityMessenger {
      * @param TARGET 要启动的Activity
      */
     inline fun <reified TARGET : FragmentActivity> launchActivityForResult(
-        starter: Fragment, vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
+        starter: Fragment, vararg params: Pair<String, Any?>,
         crossinline callback: ((result: Intent?) -> Unit),
     ) = launchActivityForResult(
         starter, TARGET::class.java, *params,
-        useActivityFM = useActivityFM, callback = callback
+        callback = callback
     )
 
     /**
@@ -271,13 +271,12 @@ object ActivityMessenger {
      * @param TARGET 要启动的Activity
      */
     inline fun <reified TARGET : FragmentActivity> launchActivityForResultCode(
-        starter: Fragment, vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
+        starter: Fragment, vararg params: Pair<String, Any?>,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
     ) = launchActivityForResultCode(
         starter,
         TARGET::class.java,
         *params,
-        useActivityFM=   useActivityFM,
         callback = callback
     )
 
@@ -312,16 +311,13 @@ object ActivityMessenger {
     inline fun launchActivityForResult(
         starter: Fragment,
         target: Class<out FragmentActivity>,
-
         vararg params: Pair<String, Any?>,
-        useActivityFM: Boolean = true,
         crossinline callback: ((result: Intent?) -> Unit),
     ) {
         finallyLaunchActivityForResult(
             starter,
             Intent(starter.activity, target).putExtras(*params),
-            useActivityFM,
-            callback
+            callback=callback
         )
     }
 
@@ -361,14 +357,12 @@ object ActivityMessenger {
         starter: Fragment,
         target: Class<out FragmentActivity>,
         vararg params: Pair<String, Any?>,
-        useActivityFM: Boolean = true,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
     ) {
         finallyLaunchActivityForResultCode(
             starter,
             Intent(starter.activity, target).putExtras(*params),
-            useActivityFM,
-            callback
+            callback=callback
         )
     }
     //</editor-fold>

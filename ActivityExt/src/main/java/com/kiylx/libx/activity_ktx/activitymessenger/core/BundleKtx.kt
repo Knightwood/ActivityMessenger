@@ -1,4 +1,4 @@
-package com.kiylx.libx.activitymessenger.core
+package com.kiylx.libx.activity_ktx.activitymessenger.core
 
 import android.os.Bundle
 import android.os.Parcelable

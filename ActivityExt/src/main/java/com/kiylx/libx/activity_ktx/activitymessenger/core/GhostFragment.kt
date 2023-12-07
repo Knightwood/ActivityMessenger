@@ -1,4 +1,4 @@
-package com.kiylx.libx.activitymessenger.core
+package com.kiylx.libx.activity_ktx.activitymessenger.core
 
 import android.app.Activity
 import android.content.Context
@@ -35,20 +35,15 @@ inline fun finallyLaunchActivityForResult(
 /**
  * @param starter
  * @param intent 传入intent
- * @param useActivityFM true:使用supportFragmentManager,false:使用
  * @param callback startActivityForResult之后执行block块
  */
 inline fun finallyLaunchActivityForResult(
     starter: Fragment,
     intent: Intent,
-    useActivityFM: Boolean = true,
     crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    val fm: FragmentManager = if (useActivityFM) {
-        starter.activity?.supportFragmentManager ?: throw Exception("no activity attached")
-    } else {
-        starter.childFragmentManager
-    }
+    val fm: FragmentManager = starter.childFragmentManager
+
     val fragment = GhostFragment()
     fragment.init(intent) { result ->
         callback(result)
@@ -63,20 +58,14 @@ inline fun finallyLaunchActivityForResult(
 /**
  * @param starter
  * @param intent 传入intent
- * @param useActivityFM true:使用supportFragmentManager,false:使用childFragmentManager
  * @param callback startActivityForResult之后执行block块
  */
 inline fun finallyLaunchActivityForResultCode(
     starter: Fragment,
     intent: Intent,
-    useActivityFM: Boolean = true,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
-    val fm: FragmentManager = if (useActivityFM) {
-        starter.activity?.supportFragmentManager ?: throw Exception("no activity attached")
-    } else {
-        starter.childFragmentManager
-    }
+    val fm: FragmentManager = starter.childFragmentManager
     val fragment = GhostFragment()
     fragment.init(intent) { resultCode, result ->
         callback(resultCode, result)

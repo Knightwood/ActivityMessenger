@@ -4,7 +4,8 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 34
+    namespace = "com.kiylx.activitymessage"
 
     defaultConfig {
         applicationId = "com.kiylx.activitymessage"
@@ -34,19 +35,18 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    buildToolsVersion("30.0.3")
 }
 
 dependencies {
-    implementation(AndroidX.Core.core)
+    implementation(AndroidX_KTX.core)
     implementation(AndroidX.appCompat)
     implementation(AndroidX.material)
     implementation(AndroidX.constraintLayout)
+    implementation(Lifecycle_KTX.viewmodel)
+    implementation(AndroidX_KTX.fragment)
+    implementation(AndroidX_KTX.activity)
     implementation(project(mapOf("path" to ":ActivityExt")))
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.4.1")
-    implementation("androidx.navigation:navigation-ui-ktx:2.4.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

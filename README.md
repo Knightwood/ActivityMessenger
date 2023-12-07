@@ -23,7 +23,7 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
 
   5. 如果参数是可序列化的泛型类对象(如*ArrayList\<Model\>*)，取出来的时候不但要显式强制转型，还要把 UNCHECKED_CAST 警告抑制；
 
-#### 在饱受这些繁琐折磨之后，便诞生出了**ActivityMessenger**。
+
 #### 它有以下特点：
 
  1. `startActivityForResult`不用另外定义`RequestCode`；
@@ -45,6 +45,10 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
     
     //携带参数（可连续多个键值对）
     launchActivity<TestActivity>("Key" to "Value")
+
+    //非接收者函数类型的
+    ActivityMessenger.launchActivity<TestActivity>(this,"Key" to "Value")
+
 ```
 ***方式2***（假设`TestActivity`是要启动的Activity）：
 ```kotlin
@@ -55,8 +59,11 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
     launchActivity(
         TestActivity::class,
         "Key1" to "Value",
-        "Key2" to 123
-    
+        "Key2" to 123)
+
+    //非接收者函数类型的
+    ActivityMessenger.launchActivity(this,MainActivity::class.java,"Key" to "Value")
+
 ```
 ### startActivityForResult：
 ***方式1***（假设`TestActivity`是要启动的Activity）：
@@ -71,6 +78,13 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
     }
     
     //携带参数同startActivity。
+        ...
+    //如果是在fragment中，使用childFragmentManager
+    launchActivityForResult<MainActivity>("Key" to "Value"){
+        
+    }
+
+
 ```
 ***方式2***（假设`TestActivity`是要启动的Activity）：
 ```kotlin

@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION", "unused", "UNCHECKED_CAST")
 
-package com.kiylx.libx.activitymessenger.androidx
+package com.kiylx.libx.activity_ktx.activitymessenger.androidx
 
 import android.app.Activity
 import android.app.Application
@@ -8,10 +8,10 @@ import android.content.ComponentName
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger.launchActivity
-import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
-import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResultCode
-import com.kiylx.libx.activitymessenger.core.putExtras
+import com.kiylx.libx.activity_ktx.activitymessenger.androidx.ActivityMessenger.launchActivity
+import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResult
+import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResultCode
+import com.kiylx.libx.activity_ktx.activitymessenger.core.putExtras
 
 /**
  * 比起ActivityMessenger.kt,这个是扩展方法版本
@@ -118,13 +118,11 @@ inline fun <reified TARGET : FragmentActivity> FragmentActivity.launchActivityFo
 
 inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResult(
     vararg params: Pair<String, Any?>,
-    useActivityFM: Boolean = true,
     crossinline callback: ((result: Intent?) -> Unit)
 ) {
     launchActivityForResult(
         target = TARGET::class.java,
         params = params,
-        useActivityFM = useActivityFM,
         callback = callback
     )
 }
@@ -162,13 +160,12 @@ inline fun <reified TARGET : FragmentActivity> FragmentActivity.launchActivityFo
 
 
 inline fun <reified TARGET : FragmentActivity> Fragment.launchActivityForResultCode(
-    vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
+    vararg params: Pair<String, Any?>,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
     launchActivityForResultCode(
         target = TARGET::class.java,
         params = params,
-        useActivityFM = useActivityFM,
         callback = callback
     )
 }
@@ -214,13 +211,12 @@ inline fun FragmentActivity.launchActivityForResult(
 
 inline fun Fragment.launchActivityForResult(
     target: Class<out FragmentActivity>,
-    vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
+    vararg params: Pair<String, Any?>,
     crossinline callback: ((result: Intent?) -> Unit)
 ) {
     finallyLaunchActivityForResult(
         this,
         Intent(this.activity, target).putExtras(*params),
-        useActivityFM,
         callback
     )
 }
@@ -258,13 +254,12 @@ inline fun FragmentActivity.launchActivityForResultCode(
 
 inline fun Fragment.launchActivityForResultCode(
     target: Class<out FragmentActivity>,
-    vararg params: Pair<String, Any?>, useActivityFM: Boolean = true,
+    vararg params: Pair<String, Any?>,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
     finallyLaunchActivityForResultCode(
         this,
         Intent(this.activity, target).putExtras(*params),
-        useActivityFM,
         callback = callback
     )
 }
@@ -290,10 +285,9 @@ inline fun FragmentActivity?.launchActivityForResult(
 
 
 inline fun Fragment.launchActivityForResult(
-    useActivityFM: Boolean = true,
     intent: Intent, crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    finallyLaunchActivityForResult(this, intent, useActivityFM, callback)
+    finallyLaunchActivityForResult(this, intent ,callback)
 }
 
 inline fun FragmentActivity?.launchActivityForResultCode(
@@ -304,9 +298,8 @@ inline fun FragmentActivity?.launchActivityForResultCode(
 
 
 inline fun Fragment.launchActivityForResultCode(
-    useActivityFM: Boolean = true,
     intent: Intent, crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) = finallyLaunchActivityForResultCode(this, intent, useActivityFM, callback)
+) = finallyLaunchActivityForResultCode(this, intent ,callback)
 //</editor-fold>
 //</editor-fold>
 //=============================================finish方法=======================
