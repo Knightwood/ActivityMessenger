@@ -38,7 +38,7 @@ afterEvaluate {
         publications {
             create<MavenPublication>("maven") {
                 groupId = "com.github.knightwood"
-                artifactId = "activityExt"
+                artifactId = "ActivityExt"
                 version = "1.0"
                 from(components.getByName("release"))
                 //artifact(tasks.getByName("bundleReleaseAar"))
