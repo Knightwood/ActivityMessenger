@@ -32,14 +32,20 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+  publishing {
+        singleVariant("release"){
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("maven") {
                 groupId = "com.github.knightwood"
-                artifactId = "ActivityExt"
-                version = "1.0"
+                artifactId = "ActivityMessenger"
+                version = "1.1"
                 from(components.getByName("release"))
                 //artifact(tasks.getByName("bundleReleaseAar"))
             }
