@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION", "unused", "UNCHECKED_CAST")
 
-package com.kiylx.libx.activity_ktx.activitymessenger.androidx
+package com.kiylx.libx.activitymessenger.androidx
 
 import android.app.Activity
 import android.app.Application
@@ -8,10 +8,10 @@ import android.content.ComponentName
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.kiylx.libx.activity_ktx.activitymessenger.androidx.ActivityMessenger.launchActivity
-import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResult
-import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResultCode
-import com.kiylx.libx.activity_ktx.activitymessenger.core.putExtras
+import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger.launchActivity
+import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
+import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResultCode
+import com.kiylx.libx.activitymessenger.core.putExtras
 
 /**
  * 比起ActivityMessenger.kt,这个是扩展方法版本

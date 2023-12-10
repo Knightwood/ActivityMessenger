@@ -19,4 +19,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ActivityMessage"
 include(":app")
-include(":ActivityExt")
+include(":activitymessenger")

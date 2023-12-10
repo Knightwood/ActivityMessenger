@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION", "unused")
 
-package com.kiylx.libx.activity_ktx.activitymessenger.core
+package com.kiylx.libx.activitymessenger.core
 
 import android.app.Activity
 import android.app.Fragment

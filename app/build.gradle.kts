@@ -29,11 +29,11 @@ android {
         //dataBinding = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -45,7 +45,7 @@ dependencies {
     implementation(Lifecycle_KTX.viewmodel)
     implementation(AndroidX_KTX.fragment)
     implementation(AndroidX_KTX.activity)
-    implementation(project(mapOf("path" to ":ActivityExt")))
+    implementation(project(mapOf("path" to ":activitymessenger")))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.3")

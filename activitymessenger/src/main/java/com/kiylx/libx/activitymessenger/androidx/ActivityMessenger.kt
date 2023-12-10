@@ -3,16 +3,16 @@
     "SpellCheckingInspection",
 )
 
-package com.kiylx.libx.activity_ktx.activitymessenger.androidx
+package com.kiylx.libx.activitymessenger.androidx
 
 import android.content.Context
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResult
-import com.kiylx.libx.activity_ktx.activitymessenger.core.finallyLaunchActivityForResultCode
-import com.kiylx.libx.activity_ktx.activitymessenger.core.putExtras
-import com.kiylx.libx.activity_ktx.activitymessenger.core.runIfNonNull
+import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
+import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResultCode
+import com.kiylx.libx.activitymessenger.core.putExtras
+import com.kiylx.libx.activitymessenger.core.runIfNonNull
 
 /**
  * 比起扩展方法需要fragment或者fragmentActivity接收者才可以调用 这里是非扩展方法版本。

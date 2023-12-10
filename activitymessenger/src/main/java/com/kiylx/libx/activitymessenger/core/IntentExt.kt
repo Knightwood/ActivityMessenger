@@ -1,11 +1,11 @@
-package com.kiylx.libx.activity_ktx.activitymessenger.core
+package com.kiylx.libx.activitymessenger.core
 
 import android.content.Intent
 import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import com.kiylx.libx.activity_ktx.activitymessenger.core.IntentFieldMethod.internalMap
+import com.kiylx.libx.activitymessenger.core.IntentFieldMethod.internalMap
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.lang.reflect.Method

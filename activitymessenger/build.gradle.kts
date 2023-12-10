@@ -1,11 +1,11 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-        id("maven-publish")
+    id("maven-publish")
 }
 
 android {
-    namespace = "com.kiylx.libx.activity_ktx"
+    namespace = "com.kiylx.libx.activitymessenger"
     compileSdk = 34
 
     defaultConfig {
@@ -32,7 +32,7 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-  publishing {
+    publishing {
         singleVariant("release"){
             withSourcesJar()
             withJavadocJar()

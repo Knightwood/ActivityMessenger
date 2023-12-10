@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.kiylx.activitymessage.databinding.ActivityMainBinding
 import com.kiylx.activitymessage.ui.SecondActivity
 import com.kiylx.activitymessage.ui.home.HomeViewModel
-import com.kiylx.libx.activity_ktx.activitymessenger.androidx.launchActivityForResult
+import com.kiylx.libx.activitymessenger.androidx.launchActivityForResult
 
 class MainActivity : AppCompatActivity() {
 
