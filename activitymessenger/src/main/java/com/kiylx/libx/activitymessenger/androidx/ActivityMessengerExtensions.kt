@@ -277,9 +277,9 @@ inline fun Fragment.launchActivityForResultCode(
  * @param intent intent
  * @param callback onActivityResult的回调
  */
-inline fun FragmentActivity?.launchActivityForResult(
+inline fun FragmentActivity.launchActivityForResult(
     intent: Intent, crossinline callback: ((result: Intent?) -> Unit)
-) = this?.run {
+) {
     finallyLaunchActivityForResult(this, intent, callback)
 }
 

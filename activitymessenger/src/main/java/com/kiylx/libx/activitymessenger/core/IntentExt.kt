@@ -29,11 +29,11 @@ import java.lang.reflect.Method
  * @param key 对应的Key
  * @return 对应的Value
  */
-fun <O> Intent?.get(key: String, defaultValue: O? = null) =
+fun <O> Intent?.getValue(key: String, defaultValue: O? = null) =
     this?.internalMap()?.get(key) as? O ?: defaultValue
 
-/** 作用同Intent.[get] */
-fun <O> Bundle?.get(key: String, defaultValue: O? = null) =
+/** 作用同Intent.[getValue] */
+fun <O> Bundle?.getValue(key: String, defaultValue: O? = null) =
     this?.internalMap()?.get(key) as? O ?: defaultValue
 
 /**
@@ -50,7 +50,7 @@ fun <O> Bundle?.get(key: String, defaultValue: O? = null) =
  *
  * @param params 键值对
  */
-fun <T> Intent.putExtras(vararg params: Pair<String, T>): Intent {
+inline fun <reified T> Intent.putExtras(vararg params: Pair<String, T>): Intent {
     if (params.isEmpty()) return this
     params.forEach { (key, value) ->
         when (value) {
@@ -93,7 +93,11 @@ fun <T> Intent.putExtras(vararg params: Pair<String, T>): Intent {
 
 internal object IntentFieldMethod {
     private val bundleClass =
-        (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) BaseBundle::class else Bundle::class).java
+        (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            BaseBundle::class
+        } else {
+            Bundle::class
+        }).java
 
     private val mExtras: Field? by lazy {
         Intent::class.java.getDeclaredField("mExtras").also { it.isAccessible = true }

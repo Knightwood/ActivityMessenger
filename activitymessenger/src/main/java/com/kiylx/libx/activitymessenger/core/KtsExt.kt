@@ -8,9 +8,6 @@ inline fun <O> O?.runIfNonNull(block: (O) -> Unit) {
 
 
 /** 不报错执行 */
-inline fun <T, R> T.runSafely(block: (orange: T) -> R) = try {
+inline fun <T, R> T.runSafely(block: (orange: T) -> R) = kotlin.runCatching {
     block(this)
-} catch (e: Exception) {
-    e.printStackTrace()
-    null
-}
+}.getOrNull()

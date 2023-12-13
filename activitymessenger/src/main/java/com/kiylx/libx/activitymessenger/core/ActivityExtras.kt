@@ -37,7 +37,7 @@ class ActivityExtras<T>(private val extraName: String, private val defaultValue:
         // 如果extra不为空则返回extra
         // 如果extra是空的，则判断intent的参数的值，如果值不为空，则将值赋予extra，并且返回
         // 如果intent参数的值也为空，则返回defaultValue，并且将值赋予extra
-        return extra ?: thisRef.intent?.get<T>(extraName)?.also { extra = it }
+        return extra ?: thisRef.intent?.getValue<T>(extraName)?.also { extra = it }
         ?: defaultValue.also { extra = it }
     }
 
@@ -62,7 +62,7 @@ class FragmentExtras<T>(private val extraName: String, private val defaultValue:
         // 如果extra不为空则返回extra
         // 如果extra是空的，则判断intent的参数的值，如果值不为空，则将值赋予extra，并且返回
         // 如果intent参数的值也为空，则返回defaultValue，并且将值赋予extra
-        return extra ?: thisRef.arguments?.get<T>(extraName)?.also { extra = it }
+        return extra ?: thisRef.arguments?.getValue<T>(extraName)?.also { extra = it }
         ?: defaultValue.also { extra = it }
     }
 

@@ -15,21 +15,21 @@ import androidx.fragment.app.FragmentManager
  * @param callback startActivityForResult之后执行block块
  */
 inline fun finallyLaunchActivityForResult(
-    starter: FragmentActivity?,
+    starter: FragmentActivity,
     intent: Intent,
     crossinline callback: ((result: Intent?) -> Unit)
 ) {
-    starter.runIfNonNull {
-        val fragment = GhostFragment()
-        fragment.init(intent) { result ->
-            callback(result)
-            it.supportFragmentManager.beginTransaction().remove(fragment)
-                .commitAllowingStateLoss()
-        }
-        it.supportFragmentManager.beginTransaction()
-            .add(fragment, GhostFragment::class.java.simpleName)
+    val fm = starter.supportFragmentManager
+
+    val fragment = GhostFragment()
+    fragment.init(intent) { result ->
+        callback(result)
+        fm.beginTransaction().remove(fragment)
             .commitAllowingStateLoss()
     }
+    fm.beginTransaction()
+        .add(fragment, GhostFragment::class.java.simpleName)
+        .commitAllowingStateLoss()
 }
 
 /**
@@ -86,12 +86,13 @@ inline fun finallyLaunchActivityForResultCode(
     intent: Intent,
     crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
+    val fm=starter.supportFragmentManager
     val fragment = GhostFragment()
     fragment.init(intent) { resultCode, result ->
         callback(resultCode, result)
-        starter.supportFragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
+        fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
     }
-    starter.supportFragmentManager.beginTransaction()
+    fm.beginTransaction()
         .add(fragment, GhostFragment::class.java.simpleName)
         .commitAllowingStateLoss()
 }

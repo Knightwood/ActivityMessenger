@@ -302,9 +302,9 @@ object ActivityMessenger {
      * @param callback onActivityResult的回调
      */
     inline fun launchActivityForResult(
-        starter: FragmentActivity?, target: Class<out FragmentActivity>,
+        starter: FragmentActivity, target: Class<out FragmentActivity>,
         vararg params: Pair<String, Any?>, crossinline callback: ((result: Intent?) -> Unit),
-    ) = starter.runIfNonNull {
+    ) = starter.let {
         finallyLaunchActivityForResult(it, Intent(it, target).putExtras(*params), callback)
     }
 
@@ -343,14 +343,12 @@ object ActivityMessenger {
      * @param callback onActivityResult的回调
      */
     inline fun launchActivityForResultCode(
-        starter: FragmentActivity?,
+        starter: FragmentActivity,
         target: Class<out FragmentActivity>,
         vararg params: Pair<String, Any?>,
         crossinline callback: ((resultCode: Int, result: Intent?) -> Unit),
     ) {
-        starter.runIfNonNull {
-            finallyLaunchActivityForResultCode(it, Intent(it, target).putExtras(*params), callback)
-        }
+        finallyLaunchActivityForResultCode(starter, Intent(starter, target).putExtras(*params), callback)
     }
 
     inline fun launchActivityForResultCode(
