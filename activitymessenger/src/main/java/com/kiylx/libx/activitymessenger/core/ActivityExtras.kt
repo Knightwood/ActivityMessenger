@@ -3,7 +3,7 @@
 package com.kiylx.libx.activitymessenger.core
 
 import android.app.Activity
-import android.app.Fragment
+import androidx.fragment.app.Fragment
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

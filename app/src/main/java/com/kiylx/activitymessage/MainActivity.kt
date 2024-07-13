@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.kiylx.activitymessage.databinding.ActivityMainBinding
 import com.kiylx.activitymessage.ui.SecondActivity
 import com.kiylx.activitymessage.ui.home.HomeViewModel
+import com.kiylx.libx.activitymessenger.androidx.launchActivity
 import com.kiylx.libx.activitymessenger.androidx.launchActivityForResult
 import com.kiylx.libx.activitymessenger.core.extraAct
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         launchActivityForResult(SecondActivity::class.java, *a) {
 
         }
+//        launchActivity<SecondActivity>()
 //        launchActivityForResult<MainActivity>("Key" to "Value") {}
 
         val homeViewModel =

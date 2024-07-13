@@ -119,11 +119,13 @@ class GhostFragment : Fragment() {
 
     /**
      * the callback to be called on the main thread when activity result is available
+     *  for result callback
      */
     private var callback: ((result: Intent?) -> Unit)? = null
 
     /**
      * the callback to be called on the main thread when activity result is available
+     * for result code callback
      */
     private var callback2: ((resultCode: Int, result: Intent?) -> Unit)? = null
 

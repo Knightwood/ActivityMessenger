@@ -38,13 +38,11 @@ android {
 }
 
 dependencies {
-    implementation(AndroidX_KTX.core)
-    implementation(AndroidX.appCompat)
-    implementation(AndroidX.material)
-    implementation(AndroidX.constraintLayout)
-    implementation(Lifecycle_KTX.viewmodel)
-    implementation(AndroidX_KTX.fragment)
-    implementation(AndroidX_KTX.activity)
+    implementation("androidx.core:core-ktx:1.8.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.activity:activity-ktx:1.8.0")
     implementation(project(mapOf("path" to ":activitymessenger")))
 
     testImplementation("junit:junit:4.13.2")
