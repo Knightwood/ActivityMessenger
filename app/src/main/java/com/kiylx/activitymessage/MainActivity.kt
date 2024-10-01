@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val a = arrayOf("Key" to "Value")
-        launchActivityForResult(SecondActivity::class.java, *a) {
+        launchActivityForResult<SecondActivity>(*a) {code,intent->
 
         }
 //        launchActivity<SecondActivity>()
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         IntentActionDelegateHolder.delegate(this){
-            it.launchActivityForResult<SecondActivity>(*a){
+            it.launchActivityForResult<SecondActivity>(*a){code,intent->
 
             }
         }

@@ -1,102 +1,68 @@
 package com.kiylx.libx.activitymessenger.core
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.kiylx.libx.activitymessenger.patch.IntentActionDelegateHolder
 
 //=================================================最终方法=======================================//
+
 /**
  * @param starter
  * @param intent 传入intent
  * @param callback startActivityForResult之后执行block块
  */
-inline fun finallyLaunchActivityForResult(
+fun finallyLaunchActivityForResult(
+    starter: Fragment,
+    intent: Intent,
+    callback: ((resultCode: Int, result: Intent?) -> Unit)
+) {
+    val fm: FragmentManager = starter.childFragmentManager
+    ActionHolder(intent,fm,callback).start()
+}
+
+/**
+ * @param starter
+ * @param intent 传入intent
+ * @param callback startActivityForResult之后执行block块
+ */
+ fun finallyLaunchActivityForResult(
     starter: FragmentActivity,
     intent: Intent,
-    crossinline callback: ((result: Intent?) -> Unit)
+    callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
     val fm = starter.supportFragmentManager
+    ActionHolder(intent,fm,callback).start()
+}
 
-    val fragment = GhostFragment()
-    fragment.init(intent) { result ->
-        callback(result)
-        fm.beginTransaction().remove(fragment)
+class ActionHolder(
+    val intent: Intent,
+    val fm: FragmentManager,
+    val callback: (code: Int, intent: Intent?) -> Unit
+) {
+    private lateinit var fragment: GhostFragment
+
+    fun start() {
+        this.fragment = GhostFragment.newInstance(intent,this)
+        fm.beginTransaction()
+            .add(fragment, GhostFragment::class.java.simpleName)
             .commitAllowingStateLoss()
     }
-    fm.beginTransaction()
-        .add(fragment, GhostFragment::class.java.simpleName)
-        .commitAllowingStateLoss()
-}
 
-/**
- * @param starter
- * @param intent 传入intent
- * @param callback startActivityForResult之后执行block块
- */
-inline fun finallyLaunchActivityForResult(
-    starter: Fragment,
-    intent: Intent,
-    crossinline callback: ((result: Intent?) -> Unit)
-) {
-    val fm: FragmentManager = starter.childFragmentManager
-
-    val fragment = GhostFragment()
-    fragment.init(intent) { result ->
-        callback(result)
-        fm.beginTransaction().remove(fragment)
-            .commitAllowingStateLoss()
-    }
-    fm.beginTransaction()
-        .add(fragment, GhostFragment::class.java.simpleName)
-        .commitAllowingStateLoss()
-}
-
-/**
- * @param starter
- * @param intent 传入intent
- * @param callback startActivityForResult之后执行block块
- */
-inline fun finallyLaunchActivityForResultCode(
-    starter: Fragment,
-    intent: Intent,
-    crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) {
-    val fm: FragmentManager = starter.childFragmentManager
-    val fragment = GhostFragment()
-    fragment.init(intent) { resultCode, result ->
-        callback(resultCode, result)
+    fun release() {
+        //通知fm关联的Activity,一切已经处理完成
+        fm.setFragmentResult(IntentActionDelegateHolder.REQUEST_KEY,
+            Bundle().apply {
+                putExtras(IntentActionDelegateHolder.RESULT_KEY to true)
+            }
+        )
         fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
     }
-    fm.beginTransaction()
-        .add(fragment, GhostFragment::class.java.simpleName)
-        .commitAllowingStateLoss()
 }
-
-/**
- * @param starter
- * @param intent 传入intent
- * @param callback startActivityForResult之后执行block块
- */
-inline fun finallyLaunchActivityForResultCode(
-    starter: FragmentActivity,
-    intent: Intent,
-    crossinline callback: ((resultCode: Int, result: Intent?) -> Unit)
-) {
-    val fm=starter.supportFragmentManager
-    val fragment = GhostFragment()
-    fragment.init(intent) { resultCode, result ->
-        callback(resultCode, result)
-        fm.beginTransaction().remove(fragment).commitAllowingStateLoss()
-    }
-    fm.beginTransaction()
-        .add(fragment, GhostFragment::class.java.simpleName)
-        .commitAllowingStateLoss()
-}
-
 
 /**
  * 真正执行startActivityForResult的地方
@@ -105,45 +71,15 @@ inline fun finallyLaunchActivityForResultCode(
  * 获取结果后，通过callback传出去。
  */
 class GhostFragment : Fragment() {
+    private lateinit var intent: Intent
+    private lateinit var actionHolder: ActionHolder
+
     private var register =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            callback2?.let {
-                it(activityResult.resultCode, activityResult.data)
-            }
-            val result: Intent? =
-                if (activityResult.resultCode == Activity.RESULT_OK) activityResult.data else null
-            callback?.let { it(result) }
+            actionHolder.callback.invoke(activityResult.resultCode,activityResult.data)
+            actionHolder.release()
         }
 
-    private var intent: Intent? = null
-
-    /**
-     * the callback to be called on the main thread when activity result is available
-     *  for result callback
-     */
-    private var callback: ((result: Intent?) -> Unit)? = null
-
-    /**
-     * the callback to be called on the main thread when activity result is available
-     * for result code callback
-     */
-    private var callback2: ((resultCode: Int, result: Intent?) -> Unit)? = null
-
-    /**
-     * @param callback onActivityResult的回调
-     */
-    fun init(intent: Intent, callback: ((result: Intent?) -> Unit)) {
-        this.intent = intent
-        this.callback = callback
-    }
-
-    fun init(
-        intent: Intent,
-        callback: ((resultCode: Int, result: Intent?) -> Unit)
-    ) {
-        this.intent = intent
-        this.callback2 = callback
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -153,10 +89,15 @@ class GhostFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        intent = null
-        callback = null
-        callback2 = null
         register.unregister()
     }
 
+    companion object {
+        fun newInstance(intent: Intent, actionHolder: ActionHolder): GhostFragment {
+            return GhostFragment().apply {
+                this.intent = intent
+                this.actionHolder = actionHolder
+            }
+        }
+    }
 }

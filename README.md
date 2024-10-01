@@ -8,7 +8,7 @@
 
 
 ```
-implementation "com.github.Knightwood:ActivityMessenger:1.0"
+implementation "com.github.Knightwood:ActivityMessenger:1.2"
 ```
 
 #### 在日常开发中，每次使用startActivityForResult时，要做的事情都超级多：
@@ -34,10 +34,16 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
 
  4. 从*Intent*中取出数据时，无须调用对应类型的方法，如`getStringExtra()`、`getIntExtra()`、`getSerializableExtra()`等；
 
-  5. 如果参数是可序列化的泛型类对象(如*ArrayList\<Model\>*)，取出来的时候不用强制转型，也没有可怕的 ***UNCHECKED_CAST*** 警告了；
+ 5. 如果参数是可序列化的泛型类对象(如*ArrayList\<Model\>*)，取出来的时候不用强制转型，也没有可怕的 ***UNCHECKED_CAST*** 警告了；
+
+### 注意
+为了和原生的startActivity和startActivityForResult区分，此库中的方法使用launch前缀命名。
+
+launchActivity和launchActivityForResult
 
 ### 示例：
 ### startActivity：
+
 ***方式1***（假设`TestActivity`是要启动的Activity）：
 ```kotlin
     //不携带参数
@@ -50,21 +56,7 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
     ActivityMessenger.launchActivity<TestActivity>(this,"Key" to "Value")
 
 ```
-***方式2***（假设`TestActivity`是要启动的Activity）：
-```kotlin
-    //不携带参数
-    launchActivity(TestActivity::class)
-    
-    //携带参数（可连续多个键值对）
-    launchActivity(
-        TestActivity::class,
-        "Key1" to "Value",
-        "Key2" to 123)
-
-    //非接收者函数类型的
-    ActivityMessenger.launchActivity(this,MainActivity::class.java,"Key" to "Value")
-
-```
+ 
 ### startActivityForResult：
 ***方式1***（假设`TestActivity`是要启动的Activity）：
 ```kotlin
@@ -86,21 +78,9 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
 
 
 ```
-***方式2***（假设`TestActivity`是要启动的Activity）：
-```kotlin
-    //不携带参数
-    launchActivityForResult(TestActivity::class) {
-        if (it == null) {
-            //未成功处理，即（ResultCode != RESULT_OK）
-        } else {
-            //处理成功，这里可以操作返回的intent
-        }
-    }
-    
-    //携带参数同startActivity。    
-```
+### 在任意context上使用startActivity和startActivityForResult：
 
-***方式3,在任意context上使用***（假设`TestActivity`是要启动的Activity）：
+***在任意context上使用***（假设`TestActivity`是要启动的Activity）：
 
 ```kotlin
 IntentActionDelegateHolder.delegate(this) {
