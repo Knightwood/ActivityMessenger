@@ -99,6 +99,22 @@ implementation "com.github.Knightwood:ActivityMessenger:1.0"
     
     //携带参数同startActivity。    
 ```
+
+***方式3,在任意context上使用***（假设`TestActivity`是要启动的Activity）：
+
+```kotlin
+IntentActionDelegateHolder.delegate(this) {
+    it.launchActivityForResult<TestActivity>(*a) {
+        if (it == null) {
+            //未成功处理，即（ResultCode != RESULT_OK）
+        } else {
+            //处理成功，这里可以操作返回的intent
+        }
+    }
+} 
+```
+
+
 ### finish：
 ```kotlin
     //退出并设置参数

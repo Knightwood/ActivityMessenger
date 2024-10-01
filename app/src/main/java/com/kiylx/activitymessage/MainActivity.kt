@@ -12,6 +12,7 @@ import com.kiylx.activitymessage.ui.home.HomeViewModel
 import com.kiylx.libx.activitymessenger.androidx.launchActivity
 import com.kiylx.libx.activitymessenger.androidx.launchActivityForResult
 import com.kiylx.libx.activitymessenger.core.extraAct
+import com.kiylx.libx.activitymessenger.patch.IntentActionDelegateHolder
 
 /**
  * 有一点要注意，当app向intent放序列化后的数据启动另一个activity时，
@@ -44,6 +45,12 @@ class MainActivity : AppCompatActivity() {
         val textView: TextView = binding.textHome
         homeViewModel.text.observe(this) {
             textView.text = it
+        }
+
+        IntentActionDelegateHolder.delegate(this){
+            it.launchActivityForResult<SecondActivity>(*a){
+
+            }
         }
     }
 }
