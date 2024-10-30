@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.os.Parcelable
 import java.io.Serializable
 
+fun Array<out Pair<String, Any>>.toBundle(): Bundle {
+    return Bundle().putExtras(*this)
+}
+
 fun <T> Bundle.putExtras(vararg params: Pair<String, T>): Bundle {
     if (params.isEmpty()) return this
     params.forEach { (key, value) ->
@@ -32,13 +36,17 @@ fun <T> Bundle.putExtras(vararg params: Pair<String, T>): Bundle {
                 when {
                     value.isArrayOf<String>() ->
                         putStringArray(key, value as Array<String?>)
+
                     value.isArrayOf<Parcelable>() ->
                         putParcelableArray(key, value as Array<Parcelable?>)
+
                     value.isArrayOf<CharSequence>() ->
                         putCharSequenceArray(key, value as Array<CharSequence?>)
+
                     else -> throw IllegalArgumentException("放不进去，怎么想都放不进去吧")
                 }
             }
+
             is Serializable -> putSerializable(key, value)
         }
     }

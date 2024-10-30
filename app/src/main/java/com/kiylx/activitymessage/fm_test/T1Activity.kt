@@ -3,6 +3,8 @@ package com.kiylx.activitymessage.fm_test
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.kiylx.activitymessage.R
+import com.kiylx.activitymessage.fm_test.home.BlankFragment1
+import com.kiylx.libx.activitymessenger.fragments.applyOp
 
 /**
  * 这个activity持有一个controller，
@@ -14,5 +16,13 @@ class T1Activity : AppCompatActivity() {
         testFms()
     }
 
-    fun testFms() {}
+    fun testFms() {
+        applyOp(R.id.fragment_container_view) {
+            addFragment<BlankFragment1> {
+                params("param1" to "a", "param2" to "b")
+                replace = true
+                containerId = R.id.fragment_container_view
+            }
+        }
+    }
 }

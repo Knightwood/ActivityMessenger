@@ -5,7 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import com.kiylx.activitymessage.R
+import com.kiylx.libx.activitymessenger.fragments.FMHelper
+import com.kiylx.libx.activitymessenger.fragments.applyOp
+import com.kiylx.libx.activitymessenger.fragments.launchFragment
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,6 +42,11 @@ class BlankFragment1 : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        view.findViewById<Button>(R.id.btn_1).setOnClickListener {
+            launchFragment<BlankFragment2>{
+                containerId=R.id.nav_host_fragment
+            }
+        }
     }
 
     companion object {
