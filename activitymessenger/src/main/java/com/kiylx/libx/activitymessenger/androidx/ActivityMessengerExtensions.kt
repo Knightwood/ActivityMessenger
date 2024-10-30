@@ -89,13 +89,14 @@ inline fun <reified TARGET : Activity> Context.launchActivity(
 inline fun <reified TARGET : Activity> FragmentActivity.launchActivityForResult(
     vararg params: Pair<String, Any?>,
     noinline callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(Intent().putExtras(*params), callback)
+) = launchActivityForResult(Intent(this, TARGET::class.java).putExtras(*params), callback)
+
 
 
 inline fun <reified TARGET : Activity> Fragment.launchActivityForResult(
     vararg params: Pair<String, Any?>,
     noinline callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(Intent().putExtras(*params), callback)
+) = launchActivityForResult(Intent(this.requireActivity(), TARGET::class.java).putExtras(*params), callback)
 //</editor-fold>
 
 //</editor-fold>

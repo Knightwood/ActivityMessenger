@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Notex.Material3"
         tools:targetApi="31" >
         <activity
-            android:name=".ui.SecondActivity"
+            android:name=".fm_test.T1Activity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.kiylx.activitymessage.activity_message_test.ThirdActivity" />
     </application>
 
 </manifest>
