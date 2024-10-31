@@ -30,7 +30,6 @@ public open class FixFragmentNavigator(
         navOptions: NavOptions?,
         navigatorExtras: Navigator.Extras?
     ) {
-        super.navigate(entries, navOptions, navigatorExtras)
         if (fragmentManager.isStateSaved) {
             Log.i(TAG, "Ignoring navigate() call: FragmentManager has already saved its state")
             return
@@ -41,36 +40,26 @@ public open class FixFragmentNavigator(
     }
 
 
-    @SuppressLint("RestrictedApi")
     private fun navigate(
         entry: NavBackStackEntry,
         navOptions: NavOptions?,
         navigatorExtras: Navigator.Extras?
     ) {
         val initialNavigation = state.backStack.value.isEmpty()
-        val restoreState =
-            (navOptions != null &&
-                    !initialNavigation &&
-                    navOptions.shouldRestoreState() &&
-                    savedIds().remove(entry.id))
+        val restoreState = (
+                navOptions != null && !initialNavigation &&
+                        navOptions.shouldRestoreState() &&
+                        savedIds().remove(entry.id)
+                )
         if (restoreState) {
-            Log.d(TAG, "navigate: restoreState")
             // Restore back stack does all the work to restore the entry
             fragmentManager.restoreBackStack(entry.id)
-            state.pushWithTransition(entry)
+            state.push(entry)
             return
         }
         val ft = createFragmentTransaction(entry, navOptions)
 
         if (!initialNavigation) {
-            val outgoingEntry = state.backStack.value.lastOrNull()
-            // if outgoing entry is initial entry, FragmentManager still triggers onBackStackChange
-            // callback for it, so we don't filter out initial entry here
-            if (outgoingEntry != null) {
-                _addPendingOps_(outgoingEntry.id)
-            }
-            // add pending ops here before any animation (if present) starts
-            _addPendingOps_(entry.id)
             ft.addToBackStack(entry.id)
         }
 
@@ -81,16 +70,11 @@ public open class FixFragmentNavigator(
         }
         ft.commit()
         // The commit succeeded, update our view of the world
-        if (isLoggingEnabled(Log.VERBOSE)) {
-            Log.v(TAG, "Calling pushWithTransition via navigate() on entry $entry")
-        }
-        state.pushWithTransition(entry)
-        Log.d(TAG, "navigate: ${state.backStack.value}")
+        state.push(entry)
     }
 
 
     override fun onLaunchSingleTop(backStackEntry: NavBackStackEntry) {
-        super.onLaunchSingleTop(backStackEntry)
         if (fragmentManager.isStateSaved) {
             Log.i(
                 TAG,
@@ -99,23 +83,15 @@ public open class FixFragmentNavigator(
             return
         }
         val ft = createFragmentTransaction(backStackEntry, null)
-        val backstack = state.backStack.value
-        if (backstack.size > 1) {
+        if (state.backStack.value.size > 1) {
             // If the Fragment to be replaced is on the FragmentManager's
             // back stack, a simple replace() isn't enough so we
             // remove it from the back stack and put our replacement
             // on the back stack in its place
-            val incomingEntry = backstack.elementAtOrNull(backstack.lastIndex - 1)
-            if (incomingEntry != null) {
-                _addPendingOps_(incomingEntry.id)
-            }
-            _addPendingOps_(backStackEntry.id, isPop = true)
             fragmentManager.popBackStack(
                 backStackEntry.id,
                 FragmentManager.POP_BACK_STACK_INCLUSIVE
             )
-
-            _addPendingOps_(backStackEntry.id, deduplicate = false)
             ft.addToBackStack(backStackEntry.id)
         }
         ft.commit()
@@ -147,61 +123,10 @@ public open class FixFragmentNavigator(
             popExitAnim = if (popExitAnim != -1) popExitAnim else 0
             ft.setCustomAnimations(enterAnim, exitAnim, popEnterAnim, popExitAnim)
         }
-
-        ft.replace(containerId, frag, entry.id)
+        ft.replace(containerId, frag)
         ft.setPrimaryNavigationFragment(frag)
         ft.setReorderingAllowed(true)
-        Log.d(TAG, "createFragmentT: ${frag.tag} === ${entry.id}")
         return ft
-/*
-        val fragments: List<Fragment> = fragmentManager.fragments
-        for (fragment in fragments) {
-            ft.hide(fragment)
-        }
-        if (!frag.isAdded) {
-            ft.add(containerId, frag, className)
-        }
-        ft.show(frag)
-        ft.setPrimaryNavigationFragment(frag)
-
-        @IdRes val destId = destination.id
-        val mBackStack: ArrayDeque<Int>
-        try {
-            val field = FragmentNavigator::class.java.getDeclaredField("mBackStack")
-            field.isAccessible = true
-            mBackStack = field[this] as ArrayDeque<Int>
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw IllegalStateException()
-        }
-
-        val initialNavigation = mBackStack.isEmpty()
-        val isSingleTopReplacement = navOptions != null && !initialNavigation
-                && navOptions.shouldLaunchSingleTop()
-                && mBackStack.last() == destId
-
-        val isAdded: Boolean
-        if (initialNavigation) {
-            isAdded = true
-        } else if (isSingleTopReplacement) {
-            if (mBackStack.size > 1) {
-                fragmentManager.popBackStack(
-                    generateBackStackName(mBackStack.size, mBackStack.last()),
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE
-                )
-                ft.addToBackStack(generateBackStackName(mBackStack.size, destId))
-            }
-            isAdded = false
-        } else {
-            ft.addToBackStack(generateBackStackName(mBackStack.size + 1, destId))
-            isAdded = true
-        }
-
-        ft.setReorderingAllowed(true)
-        if (isAdded) {
-            mBackStack.add(destId)
-        }
-        return ft*/
     }
 
     //navigate需要的方法重复类直接复制过来就可以
