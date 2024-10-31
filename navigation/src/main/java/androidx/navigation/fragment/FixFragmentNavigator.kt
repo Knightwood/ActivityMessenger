@@ -17,7 +17,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 
-@Navigator.Name("fix-fragment")
+@Navigator.Name("fragment")
 public open class FixFragmentNavigator(
     private val context: Context,
     private val fragmentManager: FragmentManager,
@@ -85,6 +85,7 @@ public open class FixFragmentNavigator(
         }
         state.pushWithTransition(entry)
         Log.d(TAG, "navigate: ${state.backStack.value}")
+        Log.d(TAG, "有效：")
     }
 
 

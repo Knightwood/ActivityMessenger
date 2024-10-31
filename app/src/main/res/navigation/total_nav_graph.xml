@@ -5,17 +5,17 @@
     android:id="@+id/total_nav_graph.xml"
     app:startDestination="@id/blankFragment2">
 
-    <fix-fragment
+    <fragment
         android:id="@+id/blankFragment2"
         android:name="com.kiylx.activitymessage.fm_test.home.BlankFragment2"
         android:label="fragment_blank2"
         tools:layout="@layout/fragment_blank2" />
-    <fix-fragment
+    <fragment
         android:id="@+id/blankFragment3"
         android:name="com.kiylx.activitymessage.fm_test.home.BlankFragment3"
         android:label="fragment_blank3"
         tools:layout="@layout/fragment_blank3" />
-    <fix-fragment
+    <fragment
         android:id="@+id/blankFragment4"
         android:name="com.kiylx.activitymessage.fm_test.home.BlankFragment4"
         android:label="fragment_blank4"
