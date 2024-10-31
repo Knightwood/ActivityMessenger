@@ -21,3 +21,4 @@ rootProject.name = "ActivityMessage"
 include(":app")
 include(":activitymessenger")
 include(":fms")
+include(":navigation")
