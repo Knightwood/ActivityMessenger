@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.androidx.navigation.fix"
+    namespace = "androidx.navigation"
     compileSdk = 34
 
     defaultConfig {
@@ -35,6 +35,9 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.fragment:fragment-ktx:1.6.1")
     implementation("androidx.activity:activity-ktx:1.8.0")
+
+    //操他妈的，使用自定义的导航总是报错，结果是个bug，只要把版本切到2.6之前就没问题了
+    //https://github.com/JacobAO/FragmentNavigatorCrash/blob/master/README.md
     val nav_version = "2.8.3"
     implementation("androidx.navigation:navigation-fragment:$nav_version")
 }
