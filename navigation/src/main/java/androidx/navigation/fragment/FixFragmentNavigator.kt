@@ -30,7 +30,6 @@ public open class FixFragmentNavigator(
         navOptions: NavOptions?,
         navigatorExtras: Navigator.Extras?
     ) {
-        super.navigate(entries, navOptions, navigatorExtras)
         if (fragmentManager.isStateSaved) {
             Log.i(TAG, "Ignoring navigate() call: FragmentManager has already saved its state")
             return
@@ -90,7 +89,6 @@ public open class FixFragmentNavigator(
 
 
     override fun onLaunchSingleTop(backStackEntry: NavBackStackEntry) {
-        super.onLaunchSingleTop(backStackEntry)
         if (fragmentManager.isStateSaved) {
             Log.i(
                 TAG,
@@ -153,55 +151,6 @@ public open class FixFragmentNavigator(
         ft.setReorderingAllowed(true)
         Log.d(TAG, "createFragmentT: ${frag.tag} === ${entry.id}")
         return ft
-/*
-        val fragments: List<Fragment> = fragmentManager.fragments
-        for (fragment in fragments) {
-            ft.hide(fragment)
-        }
-        if (!frag.isAdded) {
-            ft.add(containerId, frag, className)
-        }
-        ft.show(frag)
-        ft.setPrimaryNavigationFragment(frag)
-
-        @IdRes val destId = destination.id
-        val mBackStack: ArrayDeque<Int>
-        try {
-            val field = FragmentNavigator::class.java.getDeclaredField("mBackStack")
-            field.isAccessible = true
-            mBackStack = field[this] as ArrayDeque<Int>
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw IllegalStateException()
-        }
-
-        val initialNavigation = mBackStack.isEmpty()
-        val isSingleTopReplacement = navOptions != null && !initialNavigation
-                && navOptions.shouldLaunchSingleTop()
-                && mBackStack.last() == destId
-
-        val isAdded: Boolean
-        if (initialNavigation) {
-            isAdded = true
-        } else if (isSingleTopReplacement) {
-            if (mBackStack.size > 1) {
-                fragmentManager.popBackStack(
-                    generateBackStackName(mBackStack.size, mBackStack.last()),
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE
-                )
-                ft.addToBackStack(generateBackStackName(mBackStack.size, destId))
-            }
-            isAdded = false
-        } else {
-            ft.addToBackStack(generateBackStackName(mBackStack.size + 1, destId))
-            isAdded = true
-        }
-
-        ft.setReorderingAllowed(true)
-        if (isAdded) {
-            mBackStack.add(destId)
-        }
-        return ft*/
     }
 
     //navigate需要的方法重复类直接复制过来就可以
