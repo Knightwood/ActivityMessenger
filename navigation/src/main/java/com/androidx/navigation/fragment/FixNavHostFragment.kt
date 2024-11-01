@@ -1,7 +1,9 @@
-package androidx.navigation.fragment
+package com.androidx.navigation.fragment
 
 import android.view.View
 import androidx.navigation.NavHostController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.R
 
 
 public open class FixNavHostFragment : NavHostFragment() {

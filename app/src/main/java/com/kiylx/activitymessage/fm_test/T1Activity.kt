@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavController
-import androidx.navigation.fragment.FixFragmentNavigator
+import com.androidx.navigation.fragment.FixFragmentNavigator
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "androidx.navigation"
+    namespace = "com.androidx.navigation"
     compileSdk = 34
 
     defaultConfig {
