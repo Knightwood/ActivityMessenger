@@ -15,6 +15,8 @@ import java.util.*
 //<editor-fold desc="SavedStateHandler给viewmodel传参">
 
 /**
+ * 2025-01-24 创建方式已过时，直接使用hilt2创建，或者使用CreationExtras方式创建。
+ *
  * Fragment 1.2.0 或者 Activity 1.1.0 起, 可以使用 SavedStateHandle 作为 ViewModel 的参数。
  * SavedStateHandle 可以帮助 ViewModel 实现数据持久化，同时可以传递 Fragment 的 arguments 给 ViewModel。
  *
@@ -77,7 +79,11 @@ inline fun <reified VM : ViewModel> Fragment.viewModelByFactory(
 
 inline fun <reified VM : ViewModel> Fragment.activityViewModelByFactory(
     defaultArgs: Bundle? = null,
-    noinline create: CreateViewModel
+    noinline create: CreateViewModel={
+        val constructor =
+            findMatchingConstructor(VM::class.java, arrayOf(SavedStateHandle::class.java))
+        constructor!!.newInstance(it)
+    }
 ): Lazy<VM> {
     return activityViewModels {
         createViewModelFactoryFactory(this, defaultArgs, create)

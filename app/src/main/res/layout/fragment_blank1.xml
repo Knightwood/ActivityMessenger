@@ -8,22 +8,22 @@
     tools:context=".fm_test.home.BlankFragment1">
 
     <androidx.fragment.app.FragmentContainerView
-        android:layout_weight="1"
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="32sp"
-            android:text="示例Fragment1" />
+            android:text="示例Fragment1"
+            android:textSize="32sp" />
 
         <Button
             android:id="@+id/btn_1"
@@ -31,5 +31,23 @@
             android:layout_height="wrap_content"
             android:text="启动另一个fragment" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="关闭" />
+
+        <Button
+            android:id="@+id/btn_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="启动另一个fragment" />
+    </LinearLayout>
+
 
 </LinearLayout>

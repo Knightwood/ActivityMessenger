@@ -3,22 +3,25 @@
 package com.kiylx.libx.activitymessenger.androidx
 
 import android.app.Activity
+import android.app.ActivityOptions
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger.launchActivity
 import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
 import com.kiylx.libx.activitymessenger.core.putExtras
 
-/** 比起ActivityMessenger.kt,这个是扩展方法版本 startActivity和startActivityResult的方法集合 */
+/**
+ * 比起ActivityMessenger.kt,这个是扩展方法版本 startActivity和startActivityResult的方法集合
+ */
 //<editor-fold desc="startActivity">
-//<editor-fold desc="传入泛型">
 //====================================startActivity==================================================//
 /**
- * TargetActivity在泛型
+ * TargetActivity放在泛型
  *
  * 示例：
  *
@@ -35,28 +38,105 @@ import com.kiylx.libx.activitymessenger.core.putExtras
  */
 inline fun <reified TARGET : Activity> Activity.launchActivity(
     vararg params: Pair<String, Any?>
-) {
-    this.startActivity(Intent(this, TARGET::class.java).putExtras(*params))
-}
+) = launchActivity<TARGET>(Bundle().putExtras(*params), null)
 
+/**
+ * TargetActivity放在泛型
+ *
+ * 示例：
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivity<TestActivity>()
+ *
+ *      //携带参数（可连续多个键值对）
+ *      launchActivity<TestActivity>("Key" to "Value")
+ * ```
+ *
+ * @param params extras键值对
+ * @param TARGET 要启动的Activity
+ */
 inline fun <reified TARGET : Activity> Fragment.launchActivity(
     vararg params: Pair<String, Any?>
-) {
-    this.requireActivity().run {
-        startActivity(Intent(this, TARGET::class.java).putExtras(*params))
-    }
-}
+) = requireActivity().launchActivity<TARGET>(*params)
 
+/**
+ * TargetActivity放在泛型
+ *
+ * 示例：
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivity<TestActivity>()
+ *
+ *      //携带参数（可连续多个键值对）
+ *      launchActivity<TestActivity>("Key" to "Value")
+ * ```
+ *
+ * @param params extras键值对
+ * @param TARGET 要启动的Activity
+ */
 inline fun <reified TARGET : Activity> Context.launchActivity(
     vararg params: Pair<String, Any?>,
 ) {
-    startActivity(Intent(this, TARGET::class.java).putExtras(*params))
+    val intent = Intent(this, TARGET::class.java).putExtras(*params)
+    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(intent)
+}
+
+/**
+ * 用法：
+ *
+ * ```
+ *
+ * val options = ActivityOptions.makeSceneTransitionAnimation(this)
+ *
+ * launchActivity<SomeActivity>(
+ *     Bundle().putExtras("ee" to 1, "dd" to 2),
+ *     options
+ * )
+ * ```
+ *
+ * @param bundle 传递的数据
+ * @param options 可选参数，比如转场动画
+ * @param TARGET 要启动的Activity
+ */
+inline fun <reified TARGET : Activity> Fragment.launchActivity(
+    bundle: Bundle? = null,
+    options: ActivityOptions? = null,
+) = requireActivity().launchActivity<TARGET>(bundle, options)
+
+/**
+ * 用法：
+ *
+ * ```
+ *
+ * val options = ActivityOptions.makeSceneTransitionAnimation(this)
+ *
+ * launchActivity<SomeActivity>(
+ *     Bundle().putExtras("ee" to 1, "dd" to 2),
+ *     options
+ * )
+ * ```
+ *
+ * @param bundle 传递的数据
+ * @param options 可选参数，比如转场动画
+ * @param TARGET 要启动的Activity
+ */
+inline fun <reified TARGET : Activity> Activity.launchActivity(
+    bundle: Bundle? = null,
+    options: ActivityOptions? = null,
+) {
+    startActivity(
+        Intent(this, TARGET::class.java).also {
+            if (bundle != null) it.putExtras(bundle)
+        },
+        options?.toBundle()
+    )
 }
 
 //</editor-fold>
 
-
-//</editor-fold>
 //====================================startActivityForResult==================================================//
 
 //<editor-fold desc="startActivityForResult">
@@ -89,14 +169,19 @@ inline fun <reified TARGET : Activity> Context.launchActivity(
 inline fun <reified TARGET : Activity> FragmentActivity.launchActivityForResult(
     vararg params: Pair<String, Any?>,
     noinline callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(Intent(this, TARGET::class.java).putExtras(*params), callback)
-
+) = launchActivityForResult(
+    Intent(this, TARGET::class.java).putExtras(*params),
+    callback
+)
 
 
 inline fun <reified TARGET : Activity> Fragment.launchActivityForResult(
     vararg params: Pair<String, Any?>,
     noinline callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(Intent(this.requireActivity(), TARGET::class.java).putExtras(*params), callback)
+) = launchActivityForResult(
+    Intent(this.requireActivity(), TARGET::class.java).putExtras(*params),
+    callback
+)
 //</editor-fold>
 
 //</editor-fold>

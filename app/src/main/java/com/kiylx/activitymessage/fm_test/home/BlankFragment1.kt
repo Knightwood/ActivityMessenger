@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.kiylx.activitymessage.R
-import com.kiylx.libx.activitymessenger.fragments.FMHelper
-import com.kiylx.libx.activitymessenger.fragments.applyOp
 import com.kiylx.libx.activitymessenger.fragments.launchFragment
+import com.kiylx.libx.activitymessenger.fragments.popUp
+import com.kiylx.libx.activitymessenger.fragments.removeSelf
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,9 +43,20 @@ class BlankFragment1 : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<Button>(R.id.btn_1).setOnClickListener {
-            launchFragment<BlankFragment2>{
-                containerId=R.id.nav_host_fragment
+            //使用上一级（T1Activity）的FragmentManager，和T1Activity中的容器id，添加新的Fragment到T1Activity
+            parentFragmentManager.launchFragment<BlankFragment2>(R.id.fragment_container_view) {
+                params("key1" to "value1")
+                primaryNavigationFragment = this@BlankFragment1
             }
+        }
+        view.findViewById<Button>(R.id.btn_2).setOnClickListener {
+            //使用上一级（T1Activity）的FragmentManager，和T1Activity中的容器id，添加新的Fragment到T1Activity
+            childFragmentManager.launchFragment<BlankFragment3>(R.id.nav_host_fragment) {
+                params("key1" to "value1")
+            }
+        }
+        view.findViewById<Button>(R.id.finish).setOnClickListener {
+            popUp()
         }
     }
 

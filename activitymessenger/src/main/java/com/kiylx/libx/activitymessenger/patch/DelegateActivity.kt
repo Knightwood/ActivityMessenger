@@ -9,6 +9,9 @@ import java.util.UUID
 
 /**
  * Delegate activity
+ * 用来处理一些只能在FragmentActivity中执行的代码。
+ * 比如在普通的或者ComponentActivity中使用launchActivityForResult。会使用到透明的fragment执行请求，
+ * 而fragment需要有一个FragmentActivity宿主，所以需要在DelegateActivity中处理。
  *
  * author: knightwood
  */

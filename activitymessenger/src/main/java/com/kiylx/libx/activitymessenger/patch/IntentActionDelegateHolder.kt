@@ -19,7 +19,7 @@ object IntentActionDelegateHolder {
     internal val holder: MutableMap<UUID, (activity: FragmentActivity) -> Unit> = HashMap()
 
     /**
-     * startActivityForResult in any context.
+     * launchActivityForResult in any context.
      *
      * kotlin example:
      * ```
@@ -30,7 +30,7 @@ object IntentActionDelegateHolder {
      *
      * java example:
      * ```
-     * PermissionDelegateHolder.delegate(this, activity -> {
+     * IntentActionDelegateHolder.delegate(this, activity -> {
      *     return null;
      * });
      * ```

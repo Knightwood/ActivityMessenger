@@ -22,7 +22,7 @@ fun finallyLaunchActivityForResult(
     callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
     val fm: FragmentManager = starter.childFragmentManager
-    ActionHolder(intent,fm,callback).start()
+    ActionHolder(intent, fm, callback).start()
 }
 
 /**
@@ -30,13 +30,13 @@ fun finallyLaunchActivityForResult(
  * @param intent 传入intent
  * @param callback startActivityForResult之后执行block块
  */
- fun finallyLaunchActivityForResult(
+fun finallyLaunchActivityForResult(
     starter: FragmentActivity,
     intent: Intent,
     callback: ((resultCode: Int, result: Intent?) -> Unit)
 ) {
     val fm = starter.supportFragmentManager
-    ActionHolder(intent,fm,callback).start()
+    ActionHolder(intent, fm, callback).start()
 }
 
 class ActionHolder(
@@ -47,7 +47,7 @@ class ActionHolder(
     private lateinit var fragment: GhostFragment
 
     fun start() {
-        this.fragment = GhostFragment.newInstance(intent,this)
+        this.fragment = GhostFragment.newInstance(intent, this)
         fm.beginTransaction()
             .add(fragment, GhostFragment::class.java.simpleName)
             .commitAllowingStateLoss()
@@ -70,13 +70,13 @@ class ActionHolder(
  * 初始化此实例，调用[init]赋予callback,在attach到activity时自动执行startActivityForResult，
  * 获取结果后，通过callback传出去。
  */
-class GhostFragment : Fragment() {
+internal class GhostFragment : Fragment() {
     private lateinit var intent: Intent
     private lateinit var actionHolder: ActionHolder
 
     private var register =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            actionHolder.callback.invoke(activityResult.resultCode,activityResult.data)
+            actionHolder.callback.invoke(activityResult.resultCode, activityResult.data)
             actionHolder.release()
         }
 

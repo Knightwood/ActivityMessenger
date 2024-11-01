@@ -17,6 +17,7 @@ import com.kiylx.libx.activitymessenger.core.putExtras
  * 比起扩展方法需要fragment或者fragmentActivity接收者才可以调用 这里是非扩展方法版本。
  * startActivity和startActivityResult的方法集合
  */
+@Deprecated("use ActivityMessenger Extension functions instead")
 object ActivityMessenger {
 
 //<editor-fold desc="startActivity">

@@ -1,5 +1,6 @@
 package com.kiylx.activitymessage
 
+import android.app.ActivityOptions
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -9,10 +10,13 @@ import com.kiylx.activitymessage.databinding.ActivityMainBinding
 import com.kiylx.activitymessage.fm_test.T1Activity
 import com.kiylx.activitymessage.activity_message_test.MainViewModel
 import com.kiylx.activitymessage.activity_message_test.ThirdActivity
+import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger
 import com.kiylx.libx.activitymessenger.androidx.launchActivity
 import com.kiylx.libx.activitymessenger.androidx.launchActivityForResult
 import com.kiylx.libx.activitymessenger.core.extraAct
+import com.kiylx.libx.activitymessenger.core.putExtras
 import com.kiylx.libx.activitymessenger.patch.IntentActionDelegateHolder
+import java.util.Collections.addAll
 
 /**
  * 有一点要注意，当app向intent放序列化后的数据启动另一个activity时，
@@ -52,7 +56,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btn3.setOnClickListener {
-            launchActivity<T1Activity>()
+            launchActivity<T1Activity>("ee" to 1, "dd" to 1)
+
+//            val options = ActivityOptions.makeSceneTransitionAnimation(this)
+//            launchActivity<T1Activity>(
+//                Bundle().putExtras("ee" to 1, "dd" to 1),
+//                options
+//            )
+
         }
 
     }
