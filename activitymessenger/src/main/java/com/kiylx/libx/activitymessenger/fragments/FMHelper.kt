@@ -1,15 +1,11 @@
 package com.kiylx.libx.activitymessenger.fragments
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
-import com.kiylx.libx.activitymessenger.R
 import java.util.LinkedList
 
 
@@ -23,71 +19,6 @@ fun FragmentActivity.applyOp(containerId: Int, block: FMHelper.() -> Unit) {
     val helper = FMHelper(supportFragmentManager, containerId)
     helper.block()
     helper.execute()
-}
-
-inline fun <reified TARGET : Fragment> Fragment.launchFragment(crossinline navOptions: (NavOptions.() -> Unit) = {}) {
-    val options = NavOptions()
-    options.navOptions()
-    val container = requireActivity().getContainer(options.containerId)
-    launchFragmentInternal(container, childFragmentManager, TARGET::class.java, options)
-}
-
-inline fun <reified TARGET : Fragment> FragmentActivity.launchFragment(crossinline navOptions: (NavOptions.() -> Unit) = {}) {
-    val options = NavOptions()
-    options.navOptions()
-    val container = getContainer(options.containerId)
-    launchFragmentInternal(container, supportFragmentManager, TARGET::class.java, options)
-}
-
-
-fun launchFragmentInternal(
-    container: Int,
-    fragmentManager: FragmentManager,
-    cls: Class<out Fragment>,
-    options: NavOptions
-) {
-    fragmentManager.commit {
-        setReorderingAllowed(true)
-        if (options.replace) {
-            replace(container, cls, options.bundle, options.tag)
-        } else {
-            add(container, cls, options.bundle, options.tag)
-        }
-        if (options.addToBackStack) {
-            addToBackStack(null)
-        }
-    }
-}
-
-/**
- * 如果id代表的容器存在，则返回id。
- *
- * 否则创建一个FragmentContainerView作为容器，并将其添加到最顶层，返回id。
- *
- * @param id
- * @return
- */
-fun Activity.getContainer(id: Int? = null): Int {
-    if (id != null) {
-        return id
-    } else {
-        val containerView = FragmentContainerView(this)
-        containerView.id = R.id.f_common_container
-        containerView.layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        )
-        val rootView = findViewById<FrameLayout>(android.R.id.content)
-        rootView.addView(containerView)
-        return containerView.id
-    }
-}
-
-fun Fragment.finish() {
-    val that = this
-    parentFragmentManager.commit {
-        remove(that)
-    }
 }
 
 /**
