@@ -137,6 +137,130 @@ inline fun <reified TARGET : Activity> Activity.launchActivity(
 
 //</editor-fold>
 
+//<editor-fold desc="startActivity -传class版本">
+/**
+ * TargetActivity放在泛型
+ *
+ * 示例：
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivity(TestActivity::class.java,)
+ *
+ *      //携带参数（可连续多个键值对）
+ *      launchActivity(TestActivity::class.java,"Key" to "Value")
+ * ```
+ *
+ * @param params extras键值对
+ * @param TARGET 要启动的Activity
+ */
+fun Activity.launchActivity(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>
+) = launchActivity(cls, Bundle().putExtras(*params), null)
+
+/**
+ * TargetActivity放在泛型
+ *
+ * 示例：
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivity(TestActivity::class.java,)
+ *
+ *      //携带参数（可连续多个键值对）
+ *      launchActivity(TestActivity::class.java,"Key" to "Value")
+ * ```
+ *
+ * @param params extras键值对
+ * @param TARGET 要启动的Activity
+ */
+fun Fragment.launchActivity(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>
+) = requireActivity().launchActivity(cls, *params)
+
+/**
+ * TargetActivity放在泛型
+ *
+ * 示例：
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivity(TestActivity::class.java,)
+ *
+ *      //携带参数（可连续多个键值对）
+ *      launchActivity(TestActivity::class.java,"Key" to "Value")
+ * ```
+ *
+ * @param params extras键值对
+ * @param TARGET 要启动的Activity
+ */
+fun Context.launchActivity(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>,
+) {
+    val intent = Intent(this, cls).putExtras(*params)
+    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+    startActivity(intent)
+}
+
+/**
+ * 用法：
+ *
+ * ```
+ *
+ * val options = ActivityOptions.makeSceneTransitionAnimation(this)
+ *
+ * launchActivity(
+ *     SomeActivity::class.java,
+ *     Bundle().putExtras("ee" to 1, "dd" to 2),
+ *     options
+ * )
+ * ```
+ *
+ * @param cls 要启动的Activity
+ * @param bundle 传递的数据
+ * @param options 可选参数，比如转场动画
+ */
+fun Fragment.launchActivity(
+    cls: Class<out Activity>,
+    bundle: Bundle? = null,
+    options: ActivityOptions? = null,
+) = requireActivity().launchActivity(cls, bundle, options)
+
+/**
+ * 用法：
+ *
+ * ```
+ *
+ * val options = ActivityOptions.makeSceneTransitionAnimation(this)
+ *
+ * launchActivity(
+ *     SomeActivity::class.java,
+ *     Bundle().putExtras("ee" to 1, "dd" to 2),
+ *     options
+ * )
+ * ```
+ *
+ * @param cls 要启动的Activity
+ * @param bundle 传递的数据
+ * @param options 可选参数，比如转场动画
+ */
+fun Activity.launchActivity(
+    cls: Class<out Activity>,
+    bundle: Bundle? = null,
+    options: ActivityOptions? = null,
+) {
+    startActivity(
+        Intent(this, cls).also {
+            if (bundle != null) it.putExtras(bundle)
+        },
+        options?.toBundle()
+    )
+}
+//</editor-fold>
+
 //====================================startActivityForResult==================================================//
 
 //<editor-fold desc="startActivityForResult">
@@ -184,6 +308,27 @@ inline fun <reified TARGET : Activity> Fragment.launchActivityForResult(
 )
 //</editor-fold>
 
+//</editor-fold>
+
+//<editor-fold desc="传clas，不使用泛型">
+fun FragmentActivity.launchActivityForResult(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>,
+    callback: ((code: Int, result: Intent?) -> Unit)
+) = launchActivityForResult(
+    Intent(this, cls).putExtras(*params),
+    callback
+)
+
+
+fun Fragment.launchActivityForResult(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>,
+    callback: ((code: Int, result: Intent?) -> Unit)
+) = launchActivityForResult(
+    Intent(this.requireActivity(), cls).putExtras(*params),
+    callback
+)
 //</editor-fold>
 
 
