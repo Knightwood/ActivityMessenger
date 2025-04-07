@@ -33,24 +33,72 @@ fun finallyLaunchActivityForResult(
 fun finallyLaunchActivityForResult(
     starter: FragmentActivity,
     intent: Intent,
-    callback: ((resultCode: Int, result: Intent?) -> Unit)
+     callback: ((resultCode: Int, result: Intent?) -> Unit)
+) {
+    val fm = starter.supportFragmentManager
+    ActionHolder(intent, fm, callback).start()
+}
+
+/**
+ * @param starter
+ * @param intent 传入intent
+ * @param callback startActivityForResult之后执行block块
+ */
+fun finallyLaunchActivityForResult(
+    starter: Fragment,
+    intent: Intent,
+    callback: ((result: Intent?) -> Unit)
+) {
+    val fm: FragmentManager = starter.childFragmentManager
+    ActionHolder(intent, fm, callback).start()
+}
+
+/**
+ * @param starter
+ * @param intent 传入intent
+ * @param callback startActivityForResult之后执行block块
+ */
+fun finallyLaunchActivityForResult(
+    starter: FragmentActivity,
+    intent: Intent,
+    callback: ((result: Intent?) -> Unit)
 ) {
     val fm = starter.supportFragmentManager
     ActionHolder(intent, fm, callback).start()
 }
 
 class ActionHolder(
-    val intent: Intent,
-    val fm: FragmentManager,
-    val callback: (code: Int, intent: Intent?) -> Unit
+    private val intent: Intent,
+    private val fm: FragmentManager,
 ) {
+    private var callback1: ((code: Int, intent: Intent?) -> Unit)? = null
+    private var callback2: ((intent: Intent?) -> Unit)? = null
     private lateinit var fragment: GhostFragment
+
+    constructor(
+        intent: Intent, fm: FragmentManager,
+        callback1: (code: Int, intent: Intent?) -> Unit
+    ) : this(intent, fm) {
+        this.callback1 = callback1
+    }
+
+    constructor(
+        intent: Intent, fm: FragmentManager,
+        callback2: (intent: Intent?) -> Unit
+    ) : this(intent, fm) {
+        this.callback2 = callback2
+    }
 
     fun start() {
         this.fragment = GhostFragment.newInstance(intent, this)
         fm.beginTransaction()
             .add(fragment, GhostFragment::class.java.simpleName)
             .commitAllowingStateLoss()
+    }
+
+    operator fun invoke(code: Int, intent: Intent?) {
+        this.callback1?.invoke(code, intent)
+        this.callback2?.invoke(intent)
     }
 
     fun release() {
@@ -67,7 +115,7 @@ class ActionHolder(
 /**
  * 真正执行startActivityForResult的地方
  *
- * 初始化此实例，调用[init]赋予callback,在attach到activity时自动执行startActivityForResult，
+ * 初始化此实例，在attach到activity时自动执行startActivityForResult，得到结果后回调[ActionHolder]
  * 获取结果后，通过callback传出去。
  */
 internal class GhostFragment : Fragment() {
@@ -76,7 +124,7 @@ internal class GhostFragment : Fragment() {
 
     private var register =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            actionHolder.callback.invoke(activityResult.resultCode, activityResult.data)
+            actionHolder(activityResult.resultCode, activityResult.data)
             actionHolder.release()
         }
 

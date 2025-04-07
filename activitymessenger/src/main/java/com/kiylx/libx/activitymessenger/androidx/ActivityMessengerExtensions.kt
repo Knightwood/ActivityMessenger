@@ -14,15 +14,14 @@ import androidx.fragment.app.FragmentActivity
 import com.kiylx.libx.activitymessenger.androidx.ActivityMessenger.launchActivity
 import com.kiylx.libx.activitymessenger.core.finallyLaunchActivityForResult
 import com.kiylx.libx.activitymessenger.core.putExtras
+import com.kiylx.libx.activitymessenger.patch.IntentActionDelegateHolder
 
 /**
  * 比起ActivityMessenger.kt,这个是扩展方法版本 startActivity和startActivityResult的方法集合
  */
-//<editor-fold desc="startActivity">
+//<editor-fold desc="startActivity-传递泛型版本">
 //====================================startActivity==================================================//
 /**
- * TargetActivity放在泛型
- *
  * 示例：
  *
  * ```
@@ -33,7 +32,7 @@ import com.kiylx.libx.activitymessenger.core.putExtras
  *      launchActivity<TestActivity>("Key" to "Value")
  * ```
  *
- * @param params extras键值对
+ * @param params extras键值对，需要传递的参数
  * @param TARGET 要启动的Activity
  */
 inline fun <reified TARGET : Activity> Activity.launchActivity(
@@ -41,8 +40,6 @@ inline fun <reified TARGET : Activity> Activity.launchActivity(
 ) = launchActivity<TARGET>(Bundle().putExtras(*params), null)
 
 /**
- * TargetActivity放在泛型
- *
  * 示例：
  *
  * ```
@@ -53,7 +50,7 @@ inline fun <reified TARGET : Activity> Activity.launchActivity(
  *      launchActivity<TestActivity>("Key" to "Value")
  * ```
  *
- * @param params extras键值对
+ * @param params extras键值对，需要传递的参数
  * @param TARGET 要启动的Activity
  */
 inline fun <reified TARGET : Activity> Fragment.launchActivity(
@@ -61,8 +58,6 @@ inline fun <reified TARGET : Activity> Fragment.launchActivity(
 ) = requireActivity().launchActivity<TARGET>(*params)
 
 /**
- * TargetActivity放在泛型
- *
  * 示例：
  *
  * ```
@@ -73,7 +68,7 @@ inline fun <reified TARGET : Activity> Fragment.launchActivity(
  *      launchActivity<TestActivity>("Key" to "Value")
  * ```
  *
- * @param params extras键值对
+ * @param params extras键值对，需要传递的参数
  * @param TARGET 要启动的Activity
  */
 inline fun <reified TARGET : Activity> Context.launchActivity(
@@ -97,7 +92,7 @@ inline fun <reified TARGET : Activity> Context.launchActivity(
  * )
  * ```
  *
- * @param bundle 传递的数据
+ * @param bundle 传递给被启动activity的数据
  * @param options 可选参数，比如转场动画
  * @param TARGET 要启动的Activity
  */
@@ -119,7 +114,7 @@ inline fun <reified TARGET : Activity> Fragment.launchActivity(
  * )
  * ```
  *
- * @param bundle 传递的数据
+ * @param bundle 传递给被启动activity的数据
  * @param options 可选参数，比如转场动画
  * @param TARGET 要启动的Activity
  */
@@ -139,7 +134,6 @@ inline fun <reified TARGET : Activity> Activity.launchActivity(
 
 //<editor-fold desc="startActivity -传class版本">
 /**
- * TargetActivity放在泛型
  *
  * 示例：
  *
@@ -151,8 +145,8 @@ inline fun <reified TARGET : Activity> Activity.launchActivity(
  *      launchActivity(TestActivity::class.java,"Key" to "Value")
  * ```
  *
- * @param params extras键值对
- * @param TARGET 要启动的Activity
+ * @param params extras键值对，需要传递的参数
+ * @param cls 要启动的Activity
  */
 fun Activity.launchActivity(
     cls: Class<out Activity>,
@@ -160,7 +154,6 @@ fun Activity.launchActivity(
 ) = launchActivity(cls, Bundle().putExtras(*params), null)
 
 /**
- * TargetActivity放在泛型
  *
  * 示例：
  *
@@ -172,8 +165,8 @@ fun Activity.launchActivity(
  *      launchActivity(TestActivity::class.java,"Key" to "Value")
  * ```
  *
- * @param params extras键值对
- * @param TARGET 要启动的Activity
+ * @param params extras键值对，需要传递的参数
+ * @param cls 要启动的Activity
  */
 fun Fragment.launchActivity(
     cls: Class<out Activity>,
@@ -181,7 +174,6 @@ fun Fragment.launchActivity(
 ) = requireActivity().launchActivity(cls, *params)
 
 /**
- * TargetActivity放在泛型
  *
  * 示例：
  *
@@ -193,8 +185,8 @@ fun Fragment.launchActivity(
  *      launchActivity(TestActivity::class.java,"Key" to "Value")
  * ```
  *
- * @param params extras键值对
- * @param TARGET 要启动的Activity
+ * @param params extras键值对，需要传递的参数
+ * @param cls 要启动的Activity
  */
 fun Context.launchActivity(
     cls: Class<out Activity>,
@@ -265,13 +257,59 @@ fun Activity.launchActivity(
 
 //<editor-fold desc="startActivityForResult">
 
-//<editor-fold desc="javaclass版本-传泛型">
 
-//<editor-fold desc="javaclass版本-带code">
-
-//跟上面唯一区别是匿名函数参数多了一个ResultCode
+//<editor-fold desc="传泛型版本">
 /**
- * 作用同[FragmentActivity.launchActivityForResult] 示例：
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult<TestActivity> { result->
+ *          if (result != null) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param TARGET 要启动的Activity
+ */
+inline fun <reified TARGET : Activity> FragmentActivity.launchActivityForResult(
+    vararg params: Pair<String, Any?>,
+    noinline callback: ((result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(
+    this,
+    Intent(this, TARGET::class.java).putExtras(*params),
+    callback
+)
+
+/**
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult<TestActivity> { result->
+ *          if (result != null) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param TARGET 要启动的Activity
+ */
+inline fun <reified TARGET : Activity> Fragment.launchActivityForResult(
+    vararg params: Pair<String, Any?>,
+    noinline callback: ((result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(
+    this,
+    Intent(this.requireActivity(), TARGET::class.java).putExtras(*params),
+    callback
+)
+
+/**
  *
  * ```
  *      //不携带参数
@@ -284,57 +322,202 @@ fun Activity.launchActivity(
  *      }
  * ```
  *
- * 携带参数同[launchActivity]
- *
- * @param params extras键值对
+ * @param params extras键值对，需要传递的参数
  * @param callback onActivityResult的回调
  * @param TARGET 要启动的Activity
  */
 inline fun <reified TARGET : Activity> FragmentActivity.launchActivityForResult(
     vararg params: Pair<String, Any?>,
     noinline callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(
+) = finallyLaunchActivityForResult(
+    this,
     Intent(this, TARGET::class.java).putExtras(*params),
     callback
 )
 
-
+/**
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult<TestActivity> {code, result->
+ *          if (code == RESULT_OK) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param TARGET 要启动的Activity
+ */
 inline fun <reified TARGET : Activity> Fragment.launchActivityForResult(
     vararg params: Pair<String, Any?>,
     noinline callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(
+) = finallyLaunchActivityForResult(
+    this,
     Intent(this.requireActivity(), TARGET::class.java).putExtras(*params),
     callback
 )
-//</editor-fold>
+
+/**
+ * @param params extras键值对，需要传递的参数
+ * @param TARGET 要启动的Activity
+ */
+inline fun <reified TARGET : Activity> Context.launchActivityForResult(
+    vararg params: Pair<String, Any?>,
+    noinline callback: ((code: Int, result: Intent?) -> Unit)
+) {
+    IntentActionDelegateHolder.delegate(this) { starter ->
+        starter.launchActivityForResult(
+            Intent(starter, TARGET::class.java).putExtras(*params),
+            callback
+        )
+    }
+}
 
 //</editor-fold>
 
-//<editor-fold desc="传clas，不使用泛型">
+
+//<editor-fold desc="传class版本">
+/**
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult(TestActivity::class.java) {code, result->
+ *          if (result != null) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param cls 要启动的Activity
+ */
 fun FragmentActivity.launchActivityForResult(
     cls: Class<out Activity>,
     vararg params: Pair<String, Any?>,
-    callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(
+    callback: ((result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(
+    this,
     Intent(this, cls).putExtras(*params),
     callback
 )
 
+/**
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult(TestActivity::class.java) {code, result->
+ *          if (result != null) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param cls 要启动的Activity
+ */
+fun Fragment.launchActivityForResult(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>,
+    callback: ((result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(
+    this,
+    Intent(this.requireActivity(), cls).putExtras(*params),
+    callback
+)
+/**
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult(TestActivity::class.java) {code, result->
+ *          if (result != null) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param cls 要启动的Activity
+ */
+fun FragmentActivity.launchActivityForResult(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>,
+    callback: ((code: Int, result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(
+    this,
+    Intent(this, cls).putExtras(*params),
+    callback
+)
 
+/**
+ *
+ * ```
+ *      //不携带参数
+ *      launchActivityForResult(TestActivity::class.java) {code, result->
+ *          if (result != null) {
+ *              //处理成功，这里可以操作返回的intent
+ *          } else {
+ *             //未成功处理
+ *          }
+ *      }
+ * ```
+ *
+ * @param params extras键值对，需要传递的参数
+ * @param callback onActivityResult的回调
+ * @param cls 要启动的Activity
+ */
 fun Fragment.launchActivityForResult(
     cls: Class<out Activity>,
     vararg params: Pair<String, Any?>,
     callback: ((code: Int, result: Intent?) -> Unit)
-) = launchActivityForResult(
+) = finallyLaunchActivityForResult(
+    this,
     Intent(this.requireActivity(), cls).putExtras(*params),
     callback
 )
+
+/**
+ * @param params extras键值对，需要传递的参数
+ * @param cls 要启动的Activity
+ */
+fun Context.launchActivityForResult(
+    cls: Class<out Activity>,
+    vararg params: Pair<String, Any?>,
+   callback: ((code: Int, result: Intent?) -> Unit)
+) {
+    IntentActionDelegateHolder.delegate(this) { starter ->
+        starter.launchActivityForResult(
+            Intent(starter, cls).putExtras(*params),
+            callback
+        )
+    }
+}
 //</editor-fold>
 
 
 //=============================下面的是直接传intent版本,上面的传入的是多个params
 
 //<editor-fold desc="直接传intent版本">
+
+fun FragmentActivity.launchActivityForResult(
+    intent: Intent, callback: ((result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(this, intent, callback)
+
+fun Fragment.launchActivityForResult(
+    intent: Intent, callback: ((result: Intent?) -> Unit)
+) = finallyLaunchActivityForResult(this, intent, callback)
 
 fun FragmentActivity.launchActivityForResult(
     intent: Intent, callback: ((code: Int, result: Intent?) -> Unit)
@@ -356,7 +539,7 @@ fun Fragment.launchActivityForResult(
  *      finish(this, "Key" to "Value")
  * ```
  *
- * @param params extras键值对
+ * @param params extras键值对，需要传递的参数
  */
 fun Activity.finish(vararg params: Pair<String, Any?>) = run {
     setResult(Activity.RESULT_OK, Intent().putExtras(*params))
